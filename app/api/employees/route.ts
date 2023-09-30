@@ -1,12 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
- 
-type ResponseData = {
-  message: string
+import { NextRequest } from "next/server"
+
+export async function GET(request: NextRequest) {
+  return Response.json({data: 80})
 }
- 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
-) {
-  res.status(200).json({ message: 'Hello @ `/api/employees/`' })
+
+export async function POST(request: NextRequest) {
+  return Response.json({data: 90})
 }
