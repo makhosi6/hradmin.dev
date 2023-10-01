@@ -1,6 +1,7 @@
+import { type } from "os";
 import Employees from "../employees/page";
 
-const departments = [
+export const departments: Array<Dept> = [
   {
     id: "1",
     name: "HR",
@@ -10,29 +11,29 @@ const departments = [
     id: "2",
     name: "Finance",
     status: "Active",
-    manager_id: 1,
+    manager_id: "1",
   },
   {
     id: "3",
     name: "Marketing",
     status: "Active",
-    manager_id: 4,
+    manager_id: "4",
   },
   {
     id: "4",
     name: "Manufacturing",
     status: "Active",
-    manager_id: 2,
+    manager_id: "2",
   },
   {
     id: "5",
     name: "Management",
     status: "Active",
-    manager_id: 1,
+    manager_id: "1",
   },
 ];
 
-const users = [
+export const users = [
   {
     id: "1",
     username: "john_doe",
@@ -69,22 +70,34 @@ const users = [
 {
 }
 
-const employees = [
+ export const employees: Array<Employee> = [
   {
     id: "1",
     userId: "2",
     role: "employee", // ("employee" "manager," or "HR Administrator")
     isActive: true,
     deptId: ["3"],
+
+  },
+  {
+    id: "2",
+    userId: "3",
+    role: "manager", // ("employee" "manager," or "HR Administrator")
+    isActive: true,
+    deptId: ["4"],
   },
 ];
 
-const aggregatedUserEmployeeProfile = (employeeId: string) => {
+export const aggregatedUserEmployeeProfile = (employeeId: string): UserEmployeeProfile => {
   return userEmployeeProfile;
 };
 
+export const deconstructUserEmployeeProfile = (employeeId: string): [User, Employee, Dept] => {
+  return [users[1], employees[1], departments[0]];
+};
+
 /// aggregated data
-const userEmployeeProfile = {
+export const userEmployeeProfile: UserEmployeeProfile = {
   id: 1,
   username: "john_doe",
   first_name: "John",
@@ -99,3 +112,5 @@ const userEmployeeProfile = {
     isActive: true,
   },
 };
+
+
