@@ -50,3 +50,4 @@ employeeId: string | null;
 }
 
 type ValidateEmailReqParams = {email: string| null;}
+type DeptReqParams = {managerId: string| null;}
