@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   /// get and return employees where employeeId==`employeeId`
 
 
-  return Response.json(userEmployeeProfile);
+  return Response.json([userEmployeeProfile]);
 
 }
 
