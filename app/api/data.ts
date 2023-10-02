@@ -1,5 +1,4 @@
-import { type } from "os";
-import Employees from "../employees/page";
+import { Dept, Employee, User, UserEmployeeProfile } from "../global_types";
 
 export const departments: Array<Dept> = [
   {
@@ -33,7 +32,7 @@ export const departments: Array<Dept> = [
   },
 ];
 
-export const users = [
+export const users: Array<User> = [
   {
     id: "1",
     username: "john_doe",
@@ -70,14 +69,13 @@ export const users = [
 {
 }
 
- export const employees: Array<Employee> = [
+export const employees: Array<Employee> = [
   {
     id: "1",
     userId: "2",
     role: "employee", // ("employee" "manager," or "HR Administrator")
     isActive: true,
     deptId: ["3"],
-
   },
   {
     id: "2",
@@ -87,30 +85,80 @@ export const users = [
     deptId: ["4"],
   },
 ];
+//use to process outgoing data
+export const aggregateUserEmployeeProfile = ({
+  user,
+  employee,
+}: {
+  user: User;
+  employee: Employee;
+}): UserEmployeeProfile => { 
+  /// get manages 
+  const managers: Array<Dept> = [
 
-export const aggregatedUserEmployeeProfile = (employeeId: string): UserEmployeeProfile => {
-  return userEmployeeProfile;
+  ];
+  return {
+  userId: user.id,
+  username: user.username,
+  first_name: user.first_name,
+  last_name: user.last_name,
+  email: user.email,
+  role: employee.role,
+  employee_details: {
+    employee_id: employee.id,
+    manager_id: managers.map(dept => dept.manager_id || ""), 
+    department: employee.deptId,
+    isActive: employee.isActive,
+  } }
 };
 
-export const deconstructUserEmployeeProfile = (employeeId: string): [User, Employee, Dept] => {
-  return [users[1], employees[1], departments[0]];
+// used to process incoming data before sending
+export const deconstructUserEmployeeProfile = (
+  userEmployeeProfile: UserEmployeeProfile
+): [User, Employee] => {
+  const {
+    employee_details,
+    userId,
+    role,
+    username,
+    email,
+    last_name,
+    first_name,
+  } = userEmployeeProfile;
+  /// employee from 'userEmployeeProfile'
+  const employee: Employee = {
+    id: employee_details.employee_id,
+    userId,
+    role,
+    isActive: employee_details.isActive,
+    deptId: employee_details.department,
+  };
+  /// user from 'userEmployeeProfile'
+  const user: User = {
+    id: userId,
+    username,
+    first_name,
+    last_name,
+    email,
+    password: null,
+  };
+
+  // AND combine them
+  return [user, employee];
 };
 
 /// aggregated data
 export const userEmployeeProfile: UserEmployeeProfile = {
-  id: 1,
+  userId: "1",
   username: "john_doe",
   first_name: "John",
   last_name: "Doe",
   email: "john.doe@example.com",
   role: "employee",
   employee_details: {
-    employee_id: 101,
-    telephone_number: "123-456-7890",
+    employee_id: "101",
     manager_id: [],
     department: [],
     isActive: true,
   },
 };
-
-

@@ -1,27 +1,26 @@
-type Dept = {
+export type Dept = {
   id: string;
   name: string;
   status: string;
   manager_id?: string;
 };
 
-type UserEmployeeProfile = {
-  id: number;
+export type UserEmployeeProfile = {
+  userId: string;
   username: string;
   first_name: string;
   last_name: string;
   email: string;
   role: string;
   employee_details: {
-    employee_id: number;
-    telephone_number: string;
-    manager_id: never[];
-    department: never[];
+    employee_id: string;
+    manager_id: string[];
+    department: string[];
     isActive: boolean;
   };
 };
 
-type Employee = {
+export type Employee = {
   id: string;
   userId: string;
   role: string;
@@ -29,25 +28,27 @@ type Employee = {
   deptId: string[];
 };
 
-type User = {
+export type User = {
   id: string;
   username: string;
   first_name: string;
   last_name: string;
   email: string;
-  password: string;
+  password: string | null;
 };
 
-type EmployeeReqParams = {
+export type EmployeeReqParams = {
   deptId: string | null;
   userId: string | null;
   role: string | null;
+  page: string | null
 };
 
 
-type UserProfileReqParams = {
+export type UserProfileReqParams = {
 employeeId: string | null;
+page: string | null
 }
 
-type ValidateEmailReqParams = {email: string| null;}
-type DeptReqParams = {managerId: string| null;}
+export type ValidateEmailReqParams = {email: string| null;}
+export type DeptReqParams = {managerId: string| null; page: string | null}

@@ -4,7 +4,7 @@ import { employees } from "../../data";
 export async function GET(request: Request) {
 const id = new URL(request.url).pathname.split("/").pop()
 
-  return Response.json(employees.filter(employee => employee.id == id)[0]);
+  return Response.json(employees[0]);
 }
 
 export async function PUT(request: Request) {

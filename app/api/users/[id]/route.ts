@@ -3,7 +3,7 @@ import { users } from "../../data";
 
 export async function GET(request: Request) {
   const id = new URL(request.url).pathname.split("/").pop()
-  return Response.json(users.filter(user => user.id == id)[0]);
+  return Response.json(users[0]);
 }
 
 export async function DELETE(request: Request) {
