@@ -5,8 +5,8 @@ import {
   employees,
 } from "./../data";
 import { NextRequest } from "next/server";
-import { departments, userEmployeeProfile } from "../data";
 import { UserEmployeeProfile, UserProfileReqParams } from "@/app/global_types";
+import { fetchWrapper } from "../../helpers";
 
 export async function GET(request: NextRequest) {
   const params = new URL(request.url).searchParams;
@@ -16,15 +16,22 @@ export async function GET(request: NextRequest) {
     page: params.get("page"),
   };
 
-  // if (!employeeSearchParams.employeeId) {
-  //   return Response.json(null, { status: 400 });
-  // }
+  if (!employeeSearchParams.employeeId) {
+    return Response.json(null, { status: 400 });
+  }
 
   /// get employee where employeeId==`employeeId`
-  const employee = employees[0];
-  /// get user where userId==`employee`
-  const user = users[0];
-  // get departments mentioned @ `employee record`
+  const employee = await fetchWrapper({
+    method: "GET",
+    collection: "employees",
+    path: employeeSearchParams.employeeId,
+  });
+
+  const user = await fetchWrapper({
+    method: "GET",
+    collection: "users",
+    path: employee.userId,
+  });
 
   // AND combine them
   const userEmployeeProfile = aggregateUserEmployeeProfile({ user, employee });
@@ -40,7 +47,26 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: Request) {
-  const _userEmployeeProfile = request.body;
+  const _userEmployeeProfile = await request.json();
+
+  const [user, employee] = deconstructUserEmployeeProfile({
+    password: "PASSWORD",
+    ..._userEmployeeProfile,
+  });
+
+  const createUser = await fetchWrapper({
+    collection: "users",
+    method: "POST",
+    path: "",
+    body: user,
+  });
+  const createEmployee = await fetchWrapper({
+    collection: "",
+    method: "POST",
+    path: "",
+    body: employee,
+  });
+
   return Response.json(_userEmployeeProfile, { status: 201 });
 }
 
@@ -51,11 +77,25 @@ export async function DELETE(request: Request) {
     employeeId: params.get("employeeId"),
     page: null,
   };
+  if (employeeSearchParams.employeeId == null)
+    return Response.json(null, { status: 400 });
 
-  console.log({OD: employeeSearchParams?.employeeId});
-  
-  // if(employeeSearchParams.employeeId == null) return Response.json(null, { status: 400 });
-  /// and delete via api/employee/:id
+  const employee = await fetchWrapper({
+    collection: "employees",
+    method: "GET",
+    path: employeeSearchParams.employeeId,
+  });
+  const deleteEmployee = await fetchWrapper({
+    collection: "employees",
+    method: "DELETE",
+    path: employeeSearchParams.employeeId,
+  });
+  const deleteUser = await fetchWrapper({
+    collection: "users",
+    method: "DELETE",
+    path: employee.userId,
+  });
+
   return Response.json(null, { status: 200 });
 }
 
@@ -66,13 +106,25 @@ export async function PUT(request: Request) {
     employeeId: params.get("employeeId"),
     page: null,
   };
-//  if(employeeSearchParams.employeeId == null) return Response.json(null, { status: 400 });
-  const userEmployeeProfile = request.body as unknown as UserEmployeeProfile;
+  if (employeeSearchParams.employeeId == null)
+    return Response.json(null, { status: 400 });
+  const userEmployeeProfile = await request.json() as UserEmployeeProfile;
 
   ///
   const [user, employee] = deconstructUserEmployeeProfile(userEmployeeProfile);
 
-  /// and update via api/user/:id && api/employee/:id
+  const updateUser = await fetchWrapper({
+    collection: "users",
+    method: "PUT",
+    path: user.id,
+    body: user,
+  });
+  const updateEmployee = await fetchWrapper({
+    collection: "employees",
+    method: "PUT",
+    path: employee.id,
+    body: employee,
+  });
   ///
   return Response.json(userEmployeeProfile, { status: 200 });
 }

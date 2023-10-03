@@ -11,20 +11,19 @@ export async function GET(request: NextRequest) {
     role: params.get("role"),
     page: params.get("page"),
   };
-const  numberOfPages = employees.length / 20;
-const total = employees.length;
+  const total = employees.length;
   /// get and return employees where deptId==`deptId` && userId==`userId` && role==`role`
   return Response.json({
     page: Number(employeeSearchParams.page || 0),
     next_page: Number(employeeSearchParams.page || 1) + 1,
-    total: employees.length,
-    per_page: employees.length,
-    numberOfPages: Math.ceil(employees.length / 20),
+    total,
+    per_page: total,
+    numberOfPages: Math.ceil(total / 20),
     data: employees,
   });
 }
 
 export async function POST(request: NextRequest) {
-  const employee = request.body;
+  const employee = await request.json()
   return Response.json(employee, { status: 201 });
 }

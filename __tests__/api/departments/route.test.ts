@@ -6,7 +6,17 @@ import {
   DELETE,
 } from "../../../app/api/departments/[id]/route";
 const api_base_url = "http://localhost:3000/api";
+
+global.fetch = jest.fn(() =>
+  Promise.resolve({
+    json: () => Promise.resolve({ data: { count: 2 } }),
+  })
+) as any;
+
 describe("Departments CRUD routes - /api/departments/", () => {
+  beforeEach(() => {
+    (fetch as any).mockClear();
+  });
   test("Should Get a list of DEPT", async () => {
     /// Arrange
     const { req } = createMocks({

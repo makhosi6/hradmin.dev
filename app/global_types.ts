@@ -4,6 +4,13 @@ export type Dept = {
   status: string;
   manager_id?: string;
 };
+export type FetchParams = {
+  method: string;
+  collection: string;
+  path: string;
+  requestParams?: any;
+  body?: any 
+};
 
 export type UserEmployeeProfile = {
   userId: string;
@@ -14,7 +21,6 @@ export type UserEmployeeProfile = {
   role: string;
   employee_details: {
     employee_id: string;
-    manager_id: string[];
     department: string[];
     isActive: boolean;
   };

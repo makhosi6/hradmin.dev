@@ -13,13 +13,9 @@ export async function DELETE(request: Request) {
 
 export async function PUT(request: Request) {
   const id = new URL(request.url).pathname.split("/").pop()
-  const user  = request.body;
+  const user  = await request.json();
   return Response.json(user, {status: 200});
 }
 
-export async function PATCH(request: Request) {
-  const id = new URL(request.url).pathname.split("/").pop()
-  const user  = request.body;
-  return Response.json(user, {status: 200});
-}
+
 

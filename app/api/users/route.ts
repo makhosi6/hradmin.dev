@@ -11,11 +11,10 @@ export async function GET(request: NextRequest) {
     numberOfPages: Math.ceil(users.length / 20),
     data: users,
   });
-
 }
 
 export async function POST(request: Request) {
-  const user  = request.body;
+  const user  = await request.json();
   return Response.json(user, {status: 201});
 }
 

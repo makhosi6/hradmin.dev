@@ -106,7 +106,6 @@ export const aggregateUserEmployeeProfile = ({
   role: employee.role,
   employee_details: {
     employee_id: employee.id,
-    manager_id: managers.map(dept => dept.manager_id || ""), 
     department: employee.deptId,
     isActive: employee.isActive,
   } }
@@ -125,12 +124,15 @@ export const deconstructUserEmployeeProfile = (
     last_name,
     first_name,
   } = userEmployeeProfile;
+
+  console.log({employee_details, userEmployeeProfile});
+  
   /// employee from 'userEmployeeProfile'
   const employee: Employee = {
+    isActive: employee_details.isActive,
     id: employee_details.employee_id,
     userId,
     role,
-    isActive: employee_details.isActive,
     deptId: employee_details.department,
   };
   /// user from 'userEmployeeProfile'
@@ -157,7 +159,6 @@ export const userEmployeeProfile: UserEmployeeProfile = {
   role: "employee",
   employee_details: {
     employee_id: "101",
-    manager_id: [],
     department: [],
     isActive: true,
   },

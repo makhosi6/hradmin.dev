@@ -9,17 +9,11 @@ const id = new URL(request.url).pathname.split("/").pop()
 
 export async function PUT(request: Request) {
   const id = new URL(request.url).pathname.split("/").pop()
-  const employee  = request.body;
+  const employee  = await request.json();
   return Response.json(employee, {status: 200});
 }
 
 export async function DELETE(request: Request) {
   const id = new URL(request.url).pathname.split("/").pop()
   return Response.json(null, {status: 200});
-}
-
-export async function PATCH(request: Request) {
-  const id = new URL(request.url).pathname.split("/").pop()
-  const employee  = request.body;
-  return Response.json(employee, {status: 200});
 }

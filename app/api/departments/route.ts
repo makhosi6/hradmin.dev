@@ -8,8 +8,12 @@ export async function GET(request: NextRequest) {
     managerId: params.get("managerId"),
     page: params.get("page"),
   };
-
+  if (employeeSearchParams.managerId) {
+    const data = departments.filter(dept => dept.manager_id == employeeSearchParams.managerId)
+    return Response.json(data, { status: 200 });
+  }
   /// get and return employees where deptId==`deptId` && userId==`userId` && role==`role`
+  
   return Response.json({
     next_page: null,
     per_page: 1,
