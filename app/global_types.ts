@@ -61,3 +61,4 @@ page: string | null
 
 export type ValidateEmailReqParams = {email: string| null;}
 export type DeptReqParams = {managerId: string| null; page: string | null}
+export type UserCredentials = {username:string, password: string}

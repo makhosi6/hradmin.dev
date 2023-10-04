@@ -2,6 +2,8 @@ import { ValidateEmailReqParams } from "@/app/global_types";
 
 export async function HEAD(request: Request) {
   const params = new URL(request.url).searchParams;
+  console.log({params});
+  console.log({request: new URL(request.url)});
   const validateEmailParams: ValidateEmailReqParams = {
     email: params.get("email"),
   };

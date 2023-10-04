@@ -18,3 +18,7 @@ export async function POST(request: Request) {
   return Response.json(user, {status: 201});
 }
 
+export async function HEAD(request: Request) {
+  const user  = await request.json();
+  return Response.json(null, {status: 200});
+}

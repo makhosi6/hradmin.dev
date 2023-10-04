@@ -1,11 +1,17 @@
-import { IconButton } from "@/app/theme";
-import Head from "next/head";
-import Image from "next/image";
+"use client";
+
+
 import Link from "next/link";
-import Script from "next/script";
-import MenuButton from "./components/MenuButton";
+
+import { useEmployeesStore } from "./store/employees";
+import { useDeptStore } from "./store/depts";
+import { useUserStore } from "./store/current-user";
 
 export default function Home() {
+
+  const {employees} = useEmployeesStore()
+  const {departments} = useDeptStore()
+  const {currentUser}= useUserStore()
   return (
     <>
 
@@ -27,7 +33,7 @@ export default function Home() {
             Employee 3
           </Link>
         </div>
-        <code>{process.env.APP_HOST} - HOST </code>
+        {/* <code>{process.env.APP_HOST} - HOST </code> */}
       </main>
     </>
   );
