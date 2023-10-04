@@ -50,6 +50,9 @@ export type EmployeeReqParams = {
   page: string | null
 };
 
+export enum Status {
+ active, inactive
+}
 
 export type UserProfileReqParams = {
 employeeId: string | null;

@@ -12,12 +12,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroicons/react": "^2.0.18",
+    "@material-tailwind/react": "^2.1.2",
     "nano": "^10.1.2",
     "next": "latest",
     "next-pwa": "^5.6.0",
     "node-mocks-http": "^1.13.0",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-hook-form": "^7.47.0"
   },
   "devDependencies": {
     "@testing-library/dom": "^9.3.3",
