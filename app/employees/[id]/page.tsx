@@ -11,6 +11,8 @@ type InputFields = {
   lastName: string;
   phoneNumber: string;
   email: string;
+  input2: string;
+  input1: string;
   manager: string;
   status: Status;
 };
@@ -69,8 +71,16 @@ export default function Employee({ params: { id } }: Props) {
                 type="text"
                 crossOrigin={undefined}
               />
-              <InputWithDropdown />
-              <InputWithDropdown />
+              <InputWithDropdown label="Label"        registerInputs={register("input2", { required: true })}     options={[
+                  { value: "name1", id: "id1" },
+                  { value: "name2", id: "id2" },
+                ]} />
+              <InputWithDropdown 
+              registerInputs={register("input1", { required: true })}
+              label="Label1"       options={[
+                  { value: "name1", id: "id1" },
+                  { value: "name2", id: "id2" },
+                ]} />
               <div>
                 <span>
                   {errors.name && <span>This field is required</span>}

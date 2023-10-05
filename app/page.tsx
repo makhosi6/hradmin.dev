@@ -1,39 +1,36 @@
 "use client";
 
-
 import Link from "next/link";
 
 import { useEmployeesStore } from "./store/employees";
 import { useDeptStore } from "./store/depts";
 import { useUserStore } from "./store/current-user";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Spinner } from "./theme";
 
 export default function Home() {
+  const router = useRouter();
+  const { setAllDept } = useDeptStore();
+  const { currentUser } = useUserStore();
 
-  const {employees} = useEmployeesStore()
-  const {departments} = useDeptStore()
-  const {currentUser}= useUserStore()
+  useEffect(() => {
+    if (currentUser) {
+      /// get dept(s)
+      setAllDept();
+      ///
+      router.push("/employees");
+    } else {
+      router.push("/login");
+    }
+  }, [currentUser, router, setAllDept]);
+
   return (
     <>
-
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
-        <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-          <Link key={1} href={`/login`}>
-            Login
-          </Link>
-          <Link key={2} href={`/departments`}>
-            Departments
-          </Link>
-          <Link key={3} href={`/departments/2`}>
-            Department 2
-          </Link>
-          <Link key={4} href={`/employees`}>
-            Employees
-          </Link>
-          <Link key={5} href={`/employees/3`}>
-            Employee 3
-          </Link>
+      <main className="flex min-h-screen flex-col items-center justify-between">
+        <div className="flex justify-center items-center h-screen">
+          <Spinner className="h-16 w-16 text-gray-900/50" />;
         </div>
-        {/* <code>{process.env.APP_HOST} - HOST </code> */}
       </main>
     </>
   );

@@ -5,7 +5,12 @@ import {
   employees,
 } from "./../data";
 import { NextRequest } from "next/server";
-import { UserEmployeeProfile, UserProfileReqParams } from "@/app/global_types";
+import {
+  UserEmployeeProfile,
+  UserProfileReqParams,
+  Employee,
+  EmployeeReqParams,
+} from "@/app/global_types";
 import { fetchWrapper } from "../../helpers";
 
 export async function GET(request: NextRequest) {
@@ -13,11 +18,45 @@ export async function GET(request: NextRequest) {
 
   const employeeSearchParams: UserProfileReqParams = {
     employeeId: params.get("employeeId"),
+    role: params.get("role"),
+    managerId: params.get("managerId"),
     page: params.get("page"),
   };
 
   if (!employeeSearchParams.employeeId) {
-    return Response.json(null, { status: 400 });
+    let requestParams: EmployeeReqParams  = {};
+    if (employeeSearchParams.role) {
+      requestParams["managerId"] = employeeSearchParams.managerId;
+    } else if (employeeSearchParams.role) {
+      requestParams["role"] = employeeSearchParams.role;
+    }
+    const { data } = await fetchWrapper({
+      method: "GET",
+      collection: "employees",
+      path: "",
+      requestParams,
+    });
+
+    const allEmployees = data.map(async (employee: Employee) => {
+      const user = await fetchWrapper({
+        collection: "users",
+        path: employee.userId,
+        method: "GET",
+      });
+      return aggregateUserEmployeeProfile({ user, employee });
+    });
+
+    return Response.json(
+      {
+        page: 1,
+        next_page: null,
+        total: 1,
+        per_page: 1,
+        numberOfPages: 1,
+        data: allEmployees,
+      },
+      { status: 200 }
+    );
   }
 
   /// get employee where employeeId==`employeeId`
@@ -108,7 +147,7 @@ export async function PUT(request: Request) {
   };
   if (employeeSearchParams.employeeId == null)
     return Response.json(null, { status: 400 });
-  const userEmployeeProfile = await request.json() as UserEmployeeProfile;
+  const userEmployeeProfile = (await request.json()) as UserEmployeeProfile;
 
   ///
   const [user, employee] = deconstructUserEmployeeProfile(userEmployeeProfile);

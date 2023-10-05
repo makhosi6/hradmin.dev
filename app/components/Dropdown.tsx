@@ -1,24 +1,26 @@
 "use client";
 import React from "react";
 import { Select, Option } from "@/app/theme";
+import { UseFormRegister, UseFormRegisterReturn } from "react-hook-form";
+import { register } from "module";
 
-export function InputWithDropdown() {
-  const countries = [{ name: "NAME", flags: "22", countryCallingCode: "27" }];
-  const [country, setCountry] = React.useState(0);
-  const { name, flags, countryCallingCode } = {
-    name: "NAME",
-    flags: "22",
-    countryCallingCode: "27",
-  };
+type Props = {
+  label: string;
+  fieldName: string;
+  registerInputs: (value: string)=> void
+  options: Array<{
+    id:string,
+    value: string
+  }>;
+};
 
+export function InputWithDropdown({  options, label, registerInputs, fieldName }: Props) {
   return (
     <div className="relative flex w-full max-w-[24rem] my-4">
-      <Select variant="outlined" label="Select Version">
-        <Option> HTML</Option>
-        <Option> React</Option>
-        <Option> Vue</Option>
-        <Option> Angular</Option>
-        <Option> Svelte</Option>
+      <Select onChange={(value)=> registerInputs(`${value}`)} variant="outlined" label={label}>
+        {options.map((option) => (
+          <Option value={option.id} key={option.id}>{option.value}</Option>
+        ))}
       </Select>
     </div>
   );

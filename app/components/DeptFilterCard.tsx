@@ -12,9 +12,9 @@ export default function DeptFilterCard() {
             color="blue-gray"
             className="flex min-w-max pt-6"
           >
-            Title
+          Manager
           </Typography>
-          <InputWithDropdown />
+          {/* <InputWithDropdown label="Label1"  options={["pot2", "melt2", "jah2"]} /> */}
         </div>
       </CardBody>
       <CardFooter className="flex justify-center gap-7 pt-2">

@@ -6,8 +6,7 @@ import { EmployeeReqParams } from "@/app/global_types";
 export async function GET(request: NextRequest) {
   const params = new URL(request.url).searchParams;
   const employeeSearchParams: EmployeeReqParams = {
-    deptId: params.get("deptId"),
-    userId: params.get("userId"),
+    managerId: params.get("managerId"),
     role: params.get("role"),
     page: params.get("page"),
   };

@@ -6,16 +6,20 @@ import {
   MenuHandler,
   MenuItem,
   MenuList,
+  Spinner,
   Typography,
 } from "../theme";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Bars3Icon } from "@heroicons/react/24/solid";
 import styles from "../styles/MenuButton.module.css";
+import Link from "next/link";
+import { useUserStore } from "../store/current-user";
 
 export default function MenuButton() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [showMenu, setShowMenu] = useState(true);
+  const {logOut , isLoadingData } = useUserStore()
 
   useEffect(() => {
     const url = `${pathname}?${searchParams}`;
@@ -52,9 +56,11 @@ export default function MenuButton() {
                   d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-              <Typography variant="small" className="font-normal">
-                My Profile
-              </Typography>
+              <Link href={"/oo"}>
+                <Typography variant="small" className="font-normal">
+                  My Profile
+                </Typography>
+              </Link>
             </MenuItem>
             <MenuItem className="flex items-center gap-2">
               <svg
@@ -119,7 +125,7 @@ export default function MenuButton() {
               </Typography>
             </MenuItem>
             <hr className="my-2 border-blue-gray-50" />
-            <MenuItem className="flex items-center gap-2 ">
+            <MenuItem disabled={isLoadingData} onClick={logOut} className="flex items-center gap-2 ">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -135,7 +141,7 @@ export default function MenuButton() {
                 />
               </svg>
               <Typography variant="small" className="font-normal">
-                Sign Out
+               { isLoadingData ? <Spinner/> : 'Sign Out'}
               </Typography>
             </MenuItem>
           </MenuList>

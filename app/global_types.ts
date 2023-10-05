@@ -9,7 +9,7 @@ export type FetchParams = {
   collection: string;
   path: string;
   requestParams?: any;
-  body?: any 
+  body?: any;
 };
 
 export type UserEmployeeProfile = {
@@ -44,21 +44,23 @@ export type User = {
 };
 
 export type EmployeeReqParams = {
-  deptId: string | null;
-  userId: string | null;
-  role: string | null;
-  page: string | null
+  managerId?: string | null;
+  role?: string | null;
+  page?: string | null;
 };
 
 export enum Status {
- active, inactive
+  active,
+  inactive,
 }
 
 export type UserProfileReqParams = {
-employeeId: string | null;
-page: string | null
-}
+  employeeId?: string | null;
+  page?: string | null;
+  role?: string | null;
+  managerId?: string | null;
+};
 
-export type ValidateEmailReqParams = {email: string| null;}
-export type DeptReqParams = {managerId: string| null; page: string | null}
-export type UserCredentials = {username:string, password: string}
+export type ValidateEmailReqParams = { email: string | null };
+export type DeptReqParams = { managerId: string | null; page: string | null };
+export type UserCredentials = { email: string; password: string };

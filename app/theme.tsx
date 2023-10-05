@@ -22,5 +22,6 @@ export {
   Tab,
   Avatar,
   Tooltip,
+  Spinner,
   Breadcrumbs,Select, Option
 } from "@material-tailwind/react";

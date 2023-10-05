@@ -9,7 +9,7 @@ import { PageBreadcrumbs } from "../components/PageBreadcrumbs";
 export default function Employees() {
   return (
 
-      <div className="flex flex-col gap-6 m-auto py-5 max-w-3xl w-full">
+      <div className="flex flex-col gap-6 m-auto py-5 max-w-3xl w-full mb-5">
         <PageBreadcrumbs />
         <FilterCard />
         <EmployeesTable />

@@ -5,12 +5,13 @@ export const fetchWrapper = async ({
   collection,
   path,
   requestParams = {},
-  body
+  body,
 }: FetchParams): Promise<any> => {
   try {
     let headers = new Headers();
     headers.append("Authorization", "Bearer TOKEN");
-const baseUrl = process.env.API_BASE_URL || "http://localhost:3002/api";
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3002/api";
     let url = new URL(`${baseUrl}/${collection}/${path}`);
 
     console.log({URL: url.toString()});
@@ -25,7 +26,6 @@ const baseUrl = process.env.API_BASE_URL || "http://localhost:3002/api";
       body: body || undefined,
     });
 
-    
     const data = await response.json();
 
     return data;
@@ -35,4 +35,3 @@ const baseUrl = process.env.API_BASE_URL || "http://localhost:3002/api";
     null;
   }
 };
-
