@@ -39,5 +39,7 @@ export const fetchWrapper = async ({
 
 
 export function statusAsBool(status: string){
-  return status.toLowerCase() == Status.active
+console.log({status});
+
+  return status?.toLowerCase() == Status.active
 }

@@ -8,21 +8,26 @@ import { PageBreadcrumbs } from "../components/PageBreadcrumbs";
 import { userEmployeeProfile } from "../api/data";
 import { Dept, Status, UserEmployeeProfile } from "../global_types";
 import { useDeptStore } from "../store/depts";
+import { statusAsBool } from "../helpers";
+import { useEmployeesStore } from "../store/employees";
 
 export default function Employees() {
+  const {employees} = useEmployeesStore()
   const [filteredEmployees, setFilteredEmployees] =
-    useState<UserEmployeeProfile[]>(list);
+    useState<UserEmployeeProfile[]>(employees);
   const { getOne: getOneDept } = useDeptStore();
+
+  
   return (
     <div className="flex flex-col gap-6 m-auto py-5 max-w-3xl w-full mb-5">
-      <PageBreadcrumbs paths={["employees"]} />
+      <PageBreadcrumbs paths={["Employees"]} />
       <FilterCard
         filter={(data) =>
           setFilteredEmployees(
             data === null
-              ? list
-              : list.filter((empl) => {
-                  const selectedStatus = data.status == Status.active;
+              ? employees
+              : employees.filter((empl) => {
+                  const selectedStatus = statusAsBool(data.status);
                   const condition1 = empl.employee_details.department.includes(
                     data.department
                   );
@@ -34,23 +39,11 @@ export default function Employees() {
           )
         }
       />
-      <EmployeesTable employeesList={filteredEmployees} getOneDept={getOneDept} />
+      <EmployeesTable
+        employeesList={filteredEmployees}
+        getOneDept={getOneDept}
+      />
     </div>
   );
 }
 
-const list = [
-  userEmployeeProfile,
-  {
-    userId: "2",
-    username: "jana_doe",
-    name: "Jane",
-    email: "jd@example.com",
-    role: "employee",
-    employee_details: {
-      employee_id: "3",
-      department: ["3"],
-      isActive: false,
-    },
-  },
-];

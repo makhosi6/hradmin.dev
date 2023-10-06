@@ -6,7 +6,6 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { Status, Role, UserEmployeeProfile } from "@/app/global_types";
 import { InputWithDropdown } from "@/app/components/Dropdown";
 import { useEmployeesStore } from "@/app/store/employees";
-import { useDeptStore } from "@/app/store/depts";
 import { useUserStore } from "@/app/store/current-user";
 
 type InputFields = {
@@ -30,7 +29,7 @@ export default function Employee({ params: { id } }: Props) {
   const [emailError, setEmailError] = useState<string | null>(null);
   const { getAllEmployeesByEmployeesRole, createEmployee } =
     useEmployeesStore();
-  const { isLoadingData } = useEmployeesStore();
+  const { isLoadingData, } = useEmployeesStore();
   const { validateEmail } = useUserStore();
   const {
     register,
@@ -38,8 +37,7 @@ export default function Employee({ params: { id } }: Props) {
     watch,
     reset,
     setValue,
-    getValues,
-    formState: { errors, isValid, dirtyFields, touchedFields },
+    formState: { errors, isValid, },
   } = useForm<InputFields>();
 
   useEffect(() => {

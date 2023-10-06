@@ -37,6 +37,42 @@ export const departments: Array<Dept> = [
     status: "InActive",
     manager_id: "2",
   },
+  {
+    id: "6",
+    name: "ProductDesign90",
+    status: "InActive",
+    manager_id: "2",
+  },
+  {
+    id: "7",
+    name: "ProductDesign12",
+    status: "InActive",
+    manager_id: "2",
+  },
+  {
+    id: "8",
+    name: "ProductDesign4",
+    status: "InActive",
+    manager_id: "2",
+  },
+  {
+    id: "9",
+    name: "ProductDesign9",
+    status: "InActive",
+    manager_id: "2",
+  },
+  {
+    id: "10",
+    name: "ProductDesign10",
+    status: "InActive",
+    manager_id: "2",
+  },
+  {
+    id: "11",
+    name: "ProductDesign11",
+    status: "InActive",
+    manager_id: "2",
+  },
 ];
 
 export const users: Array<User> = [

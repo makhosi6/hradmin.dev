@@ -1,27 +1,33 @@
 "use client";
 import { useState } from "react";
-import { Select , Option } from "../theme";
+import { Select, Option } from "../theme";
 
-export default function ItemsShowPerPage() {
-  const [selectedVal, onSelect] = useState<any>("10");
+type Props = {
+  setItemsShownPerPage: (itemsPerPage: number) => void;
+};
+
+export default function ItemsShowPerPage({ setItemsShownPerPage }: Props) {
   return (
     <div>
       <Select
-        onChange={onSelect}
+        onChange={(itemsPerPage) =>
+          setItemsShownPerPage(Number(itemsPerPage ?? 10))
+        }
         color="gray"
-        value={selectedVal}
         animate={{
           mount: { y: 0 },
           unmount: { y: 25 },
         }}
         label="Show per page"
       >
-        <Option key="10">10</Option>
-        <Option key="20">20</Option>
-        <Option key="50">50</Option>
-        <Option key="100">100</Option>
-        <Option key="all">All</Option>
+        {VALUES.map((value, index) => (
+          <Option key={value + `_${index}`} value={value}>
+            {value}
+          </Option>
+        ))}
       </Select>
     </div>
   );
 }
+
+const VALUES = ["5", "10", "20", "50", "100"];

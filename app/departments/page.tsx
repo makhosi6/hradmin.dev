@@ -24,7 +24,7 @@ export default function Departments() {
   
   return (
     <div className="flex flex-col gap-6 m-auto py-5 max-w-3xl w-full mb-5">
-      <PageBreadcrumbs paths={["departments"]} />
+      <PageBreadcrumbs paths={["Departments"]} />
       <DeptFilterCard
         filter={(data) => {
           const filtered = departments.filter(

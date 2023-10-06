@@ -15,10 +15,10 @@ export async function POST(request: Request) {
     );
   }
   /// user // get user from DB
-  const user = users[0];
+  const user = users[2];
 
   // also get employee
-  const employee = employees[0];
+  const employee = employees[2];
 
   return Response.json(
     {

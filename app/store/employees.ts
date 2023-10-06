@@ -14,7 +14,9 @@ type EmployeeState = {
   ) => Promise<Array<UserEmployeeProfile>>;
   getEmployee: (employeeId: string) => Promise<UserEmployeeProfile>;
   deleteEmployee: (employeeId: string) => Promise<boolean>;
-  editEmployee: (userProfile: UserEmployeeProfile) => Promise<UserEmployeeProfile>;
+  editEmployee: (
+    userProfile: UserEmployeeProfile
+  ) => Promise<UserEmployeeProfile>;
   createEmployee: (userProfile: UserEmployeeProfile) => Promise<void>;
 };
 
@@ -60,6 +62,7 @@ export const useEmployeesStore = create<EmployeeState>((set) => ({
     set((state) => ({
       ...state,
       isLoadingData: false,
+      employees: data,
     }));
 
     return data;
@@ -87,7 +90,7 @@ export const useEmployeesStore = create<EmployeeState>((set) => ({
     return data;
   },
   editEmployee: async (newEmployee: UserEmployeeProfile) => {
-    console.log({newEmployee});
+    console.log({ newEmployee });
     set((state) => ({
       ...state,
       isLoadingData: true,
@@ -105,17 +108,22 @@ export const useEmployeesStore = create<EmployeeState>((set) => ({
       }
     );
 
-    const updatedUser = await response.json()
+    const updatedUser = await response.json();
     set((state) => ({
       ...state,
-      employees: [...state.employees.filter(employee => employee.userId != updatedUser.userId), updatedUser],
+      employees: [
+        ...state.employees.filter(
+          (employee) => employee.userId != updatedUser.userId
+        ),
+        updatedUser,
+      ],
       isLoadingData: false,
     }));
     return updatedUser;
   },
   createEmployee: async (newEmployee: UserEmployeeProfile) => {
-    console.log({newEmployee});
-    
+    console.log({ newEmployee });
+
     set((state) => ({
       ...state,
       isLoadingData: true,
@@ -133,13 +141,12 @@ export const useEmployeesStore = create<EmployeeState>((set) => ({
       }
     );
 
-    const updatedUser = await response.json()
+    const updatedUser = await response.json();
     set((state) => ({
       ...state,
       employees: [...state.employees, updatedUser],
       isLoadingData: false,
     }));
-   
   },
   deleteEmployee: async (employeeId) => {
     throw Error("UnImplemented function");

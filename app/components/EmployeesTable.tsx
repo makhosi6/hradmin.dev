@@ -1,4 +1,7 @@
-import { MagnifyingGlassIcon, ArchiveBoxIcon } from "@heroicons/react/24/outline";
+import {
+  MagnifyingGlassIcon,
+  ArchiveBoxIcon,
+} from "@heroicons/react/24/outline";
 import { PencilIcon } from "@heroicons/react/24/solid";
 import {
   Card,
@@ -10,7 +13,6 @@ import {
   CardFooter,
   Chip,
   CardHeader,
-
   Tooltip,
 } from "@/app/theme";
 import React, { useState } from "react";
@@ -18,23 +20,30 @@ import ItemsShowPerPage from "./ItemsShowPerPage";
 import { Dept, UserEmployeeProfile } from "../global_types";
 import { useDeptStore } from "../store/depts";
 
-
 const TABLE_HEAD = ["Member", "Department", "Status", "Role", "Actions"];
-
 
 type Props = {
   employeesList: Array<UserEmployeeProfile>;
   getOneDept: (deptId: string) => Dept | null;
-}
+};
 
-export function EmployeesTable({employeesList, getOneDept}: Props) {
+export function EmployeesTable({ employeesList, getOneDept }: Props) {
+  const [page, setPage] = useState(1);
+  const [itemsShownPerPage, setItemsShownPerPage] = useState(10);
 
-
+  ///
+  const OFFSET = (page - 1) * itemsShownPerPage;
+  const LIMIT = OFFSET + itemsShownPerPage;
+  const MAX_PAGES = Math.ceil(employeesList.length / itemsShownPerPage);
   return (
     <Card className="h-full w-full">
-      <CardHeader floated={false} shadow={false} className="rounded-none overflow-visible">
+      <CardHeader
+        floated={false}
+        shadow={false}
+        className="rounded-none overflow-visible"
+      >
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row mt-2">
-          <ItemsShowPerPage />
+          <ItemsShowPerPage setItemsShownPerPage={setItemsShownPerPage} />
           <div className="w-full md:w-72">
             <Input
               label="Search"
@@ -65,95 +74,117 @@ export function EmployeesTable({employeesList, getOneDept}: Props) {
             </tr>
           </thead>
           <tbody>
-            {employeesList.map(
-              ({  name, email, username, role, employee_details: {department,isActive} }, index) => {
-                const isLast = index === employeesList.length - 1;
-                const classes = isLast
-                  ? "p-4"
-                  : "p-4 border-b border-blue-gray-50";
+            {employeesList
+              .slice(OFFSET, LIMIT)
+              .map(
+                (
+                  {
+                    name,
+                    email,
+                    username,
+                    role,
+                    employee_details: { department, isActive },
+                  },
+                  index
+                ) => {
+                  const isLast = index === employeesList.length - 1;
+                  const classes = isLast
+                    ? "p-4"
+                    : "p-4 border-b border-blue-gray-50";
 
-                return (
-                  <tr key={name}>
-                    <td className={classes}>
-                      <div className="flex items-center gap-3">
+                  return (
+                    <tr key={name}>
+                      <td className={classes}>
+                        <div className="flex items-center gap-3">
+                          <div className="flex flex-col">
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {`${name} (${username})`}
+                            </Typography>
+                            <Typography
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal opacity-70"
+                            >
+                              {email}
+                            </Typography>
+                          </div>
+                        </div>
+                      </td>
+                      <td className={classes}>
                         <div className="flex flex-col">
                           <Typography
                             variant="small"
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {`${name} (${username})`}
-                          </Typography>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal opacity-70"
-                          >
-                            {email}
+                            {getOneDept(`${department[0]}`)?.name ||
+                              "Dept name"}
                           </Typography>
                         </div>
-                      </div>
-                    </td>
-                    <td className={classes}>
-                      <div className="flex flex-col">
+                      </td>
+                      <td className={classes}>
+                        <div className="w-max">
+                          <Chip
+                            variant="ghost"
+                            size="sm"
+                            value={isActive ? "Active" : "InActive"}
+                            color={isActive ? "green" : "blue-gray"}
+                          />
+                        </div>
+                      </td>
+                      <td className={classes}>
                         <Typography
                           variant="small"
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {getOneDept(`${department[0]}`)?.name 
-                          || "Dept name"}
+                          {role}
                         </Typography>
-              
-                      </div>
-                    </td>
-                    <td className={classes}>
-                      <div className="w-max">
-                        <Chip
-                          variant="ghost"
-                          size="sm"
-                          value={isActive ? "Active" : "InActive"}
-                          color={isActive ? "green" : "blue-gray"}
-                        />
-                      </div>
-                    </td>
-                    <td className={classes}>
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal"
-                      >
-                        {role}
-                      </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Tooltip content="Edit User">
-                        <IconButton variant="text">
-                          <PencilIcon className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip content="Disable User">
-                        <IconButton variant="text">
-                          <ArchiveBoxIcon className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                    </td>
-                  </tr>
-                );
-              }
-            )}
+                      </td>
+                      <td className={classes}>
+                        <Tooltip content="Edit User">
+                          <IconButton variant="text">
+                            <PencilIcon className="h-4 w-4" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip content="Disable User">
+                          <IconButton variant="text">
+                            <ArchiveBoxIcon className="h-4 w-4" />
+                          </IconButton>
+                        </Tooltip>
+                      </td>
+                    </tr>
+                  );
+                }
+              )}
           </tbody>
         </table>
       </CardBody>
       <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
         <Typography variant="small" color="blue-gray" className="font-normal">
-          Page 1 of 10
+        Page {page} of {MAX_PAGES}
         </Typography>
         <div className="flex gap-2">
-          <Button variant="outlined" size="sm">
+        <Button
+            key={"prev-btn"}
+            disabled={page == 1}
+            onClick={() => setPage(page - 1)}
+            variant="outlined"
+            size="sm"
+          >
             Previous
           </Button>
-          <Button variant="outlined" size="sm">
+          <Button
+            key={"next-btn"}
+            disabled={page == MAX_PAGES}
+            onClick={() => setPage(page + 1)}
+            variant="outlined"
+            size="sm"
+          >
             Next
           </Button>
         </div>
@@ -161,5 +192,3 @@ export function EmployeesTable({employeesList, getOneDept}: Props) {
     </Card>
   );
 }
-
-
