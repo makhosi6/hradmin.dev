@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
   };
 
   if (!employeeSearchParams.employeeId) {
-    let requestParams: EmployeeReqParams  = {};
+    let requestParams: EmployeeReqParams = {};
     if (employeeSearchParams.role) {
       requestParams["managerId"] = employeeSearchParams.managerId;
     } else if (employeeSearchParams.role) {
@@ -37,14 +37,19 @@ export async function GET(request: NextRequest) {
       requestParams,
     });
 
-    const allEmployees = data.map(async (employee: Employee) => {
+    const allEmployees: Array<UserEmployeeProfile> = [];
+
+    for (let index = 0; index < data.length; index++) {
+      const employee = data[index];
       const user = await fetchWrapper({
         collection: "users",
         path: employee.userId,
         method: "GET",
       });
-      return aggregateUserEmployeeProfile({ user, employee });
-    });
+
+      const output = aggregateUserEmployeeProfile({ user, employee });
+      allEmployees.push(output);
+    }
 
     return Response.json(
       {
@@ -90,8 +95,14 @@ export async function POST(request: Request) {
 
   const [user, employee] = deconstructUserEmployeeProfile({
     password: "PASSWORD",
+    userId: "uuid",
+    employee_details: {
+      ..._userEmployeeProfile.employee_details,
+      employee_id: "string",
+    },
     ..._userEmployeeProfile,
   });
+
 
   const createUser = await fetchWrapper({
     collection: "users",
@@ -100,7 +111,7 @@ export async function POST(request: Request) {
     body: user,
   });
   const createEmployee = await fetchWrapper({
-    collection: "",
+    collection: "employees",
     method: "POST",
     path: "",
     body: employee,

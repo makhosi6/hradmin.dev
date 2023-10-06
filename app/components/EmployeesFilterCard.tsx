@@ -1,62 +1,140 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardBody, Typography, CardFooter, Button } from "../theme";
 import { InputWithDropdown } from "./Dropdown";
+import { useForm } from "react-hook-form";
+import { Status, UserEmployeeProfile } from "../global_types";
+import { useDeptStore } from "../store/depts";
+import { useEmployeesStore } from "../store/employees";
+type FilterFormData = {
+  status: string;
+  department: string;
+  manager: string;
+};
+type FilterFunction = (data: FilterFormData | null) => void;
+type Props = {
+  filter: FilterFunction;
+};
 
-export default function EmployeesFilterCard() {
+export default function EmployeesFilterCard({ filter }: Props) {
+  const { getAllEmployeesByEmployeesRole } = useEmployeesStore();
+  const [managers, setManagers] = useState<UserEmployeeProfile[]>();
+  const { departments } = useDeptStore();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    setValue,
+    getValues,
+    reset,
+  } = useForm<FilterFormData>({
+    mode: "onBlur",
+    reValidateMode: "onBlur",
+    shouldUnregister: true,
+  });
+
+  useEffect(() => {
+    getAllEmployeesByEmployeesRole("manager")
+      .then(setManagers)
+      .catch(console.warn);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <Card>
-      <CardBody>
-        <div className="flex flex-col sm:flex-col md:flex-row lg:flex-row 2xl:flex-row justify-around">
-          <Typography
-            variant="h6"
-            color="blue-gray"
-            className="flex min-w-max pt-6"
-          >
-            Title
-          </Typography>
-          {/* <InputWithDropdown label="Label1"  
-      
-      options={[
-        { value: "name1", id: "id1" },
-        { value: "name2", id: "id2" },
-      ]}
-      />
-       */}
-        </div>
-        <div className="flex flex-col sm:flex-col md:flex-row lg:flex-row 2xl:flex-row justify-around">
-          <Typography
-            variant="h6"
-            color="blue-gray"
-            className="flex min-w-max pt-6"
-          >
-            Title
-          </Typography>
-          {/* <InputWithDropdown label="Label1"  
+    <form onSubmit={handleSubmit(filter)}>
+      <Card>
+        <CardBody>
+          <div className="flex flex-col sm:flex-col md:flex-row lg:flex-row 2xl:flex-row justify-between">
+            <Typography
+              variant="h6"
+              color="blue-gray"
+              className="flex min-w-max pt-6"
+            >
+              Status
+            </Typography>
+            <InputWithDropdown
+              label="Status"
+              onChange={(value) =>
+                setValue("status", value, {
+                  shouldValidate: true,
+                  shouldTouch: true,
+                })
+              }
               options={[
-                { value: "name1", id: "id1" },
-                { value: "name2", id: "id2" },
+                {
+                  value: Status.active.toUpperCase() + " ONLY",
+                  id: Status.active,
+                },
+                {
+                  value: Status.inactive.toUpperCase() + " ONLY",
+                  id: Status.inactive,
+                },
               ]}
-        /> */}
-        </div>
-        <div className="flex flex-col sm:flex-col md:flex-row lg:flex-row 2xl:flex-row justify-around">
-          <Typography
-            variant="h6"
-            color="blue-gray"
-            className="flex min-w-max pt-6"
+              fieldName="Status"
+            />
+          </div>
+          <div className="flex flex-col sm:flex-col md:flex-row lg:flex-row 2xl:flex-row justify-between">
+            <Typography
+              variant="h6"
+              color="blue-gray"
+              className="flex min-w-max pt-6"
+            >
+              Department
+            </Typography>
+            <InputWithDropdown
+              label="Department"
+              fieldName={"Department"}
+              onChange={(value) =>
+                setValue("department", value, {
+                  shouldValidate: true,
+                  shouldTouch: true,
+                })
+              }
+              options={departments.map((dept) => ({
+                value: `${dept.name}`,
+                id: `${dept.id}`,
+              }))}
+            />
+          </div>
+          <div className="flex flex-col sm:flex-col md:flex-row lg:flex-row 2xl:flex-row justify-between">
+            <Typography
+              variant="h6"
+              color="blue-gray"
+              className="flex min-w-max pt-6"
+            >
+              Manager
+            </Typography>
+            <InputWithDropdown
+              label="Manager"
+              onChange={(value) =>
+                setValue("manager", value, {
+                  shouldValidate: true,
+                  shouldTouch: true,
+                })
+              }
+              options={
+                managers?.map((manager) => ({
+                  value: `${manager.name} (${manager.username})`,
+                  id: `${manager.userId}`,
+                })) || []
+              }
+              fieldName={""}
+            />
+          </div>
+        </CardBody>
+        <CardFooter className="flex justify-center gap-7 pt-2">
+          <Button type="submit">Filter</Button>
+          <Button
+            onClick={() => {
+              reset();
+              filter(null);
+            }}
+            className="mx-2"
+            variant="outlined"
           >
-            Title
-          </Typography>
-          {/* <InputWithDropdown  label="Label1" 
-              options={[
-                { value: "name1", id: "id1" },
-                { value: "name2", id: "id2" },
-              ]}
-        /> */}
-        </div>
-      </CardBody>
-      <CardFooter className="flex justify-center gap-7 pt-2">
-        <Button>Filter</Button>
-      </CardFooter>
-    </Card>
+            Reset
+          </Button>
+        </CardFooter>
+      </Card>{" "}
+    </form>
   );
 }

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     page: params.get("page"),
   };
   if (employeeSearchParams.managerId) {
-    const data = departments.filter(dept => dept.manager_id == employeeSearchParams.managerId)
+    const data = departments.filter(dept => dept.manager_id === employeeSearchParams.managerId)
     return Response.json(data, { status: 200 });
   }
   /// get and return employees where deptId==`deptId` && userId==`userId` && role==`role`
@@ -26,6 +26,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const dept  = request.body;
-  return Response.json(dept, {status: 201});
+  const dept  = await request.json();
+  const id = Math.floor(Math.random() * 9000).toString()
+  return Response.json({ ...dept, id}, {status: 201});
 }

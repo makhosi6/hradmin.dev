@@ -1,8 +1,7 @@
-import { employees } from "./../api/data";
-import { type } from "os";
 import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 import { UserEmployeeProfile } from "../global_types";
+import { stat } from "fs";
 
 type EmployeeState = {
   isLoadingData: boolean;
@@ -16,6 +15,7 @@ type EmployeeState = {
   getEmployee: (employeeId: string) => Promise<UserEmployeeProfile>;
   deleteEmployee: (employeeId: string) => Promise<boolean>;
   editEmployee: (userProfile: UserEmployeeProfile) => Promise<UserEmployeeProfile>;
+  createEmployee: (userProfile: UserEmployeeProfile) => Promise<void>;
 };
 
 export const useEmployeesStore = create<EmployeeState>((set) => ({
@@ -87,6 +87,7 @@ export const useEmployeesStore = create<EmployeeState>((set) => ({
     return data;
   },
   editEmployee: async (newEmployee: UserEmployeeProfile) => {
+    console.log({newEmployee});
     set((state) => ({
       ...state,
       isLoadingData: true,
@@ -105,8 +106,40 @@ export const useEmployeesStore = create<EmployeeState>((set) => ({
     );
 
     const updatedUser = await response.json()
-
+    set((state) => ({
+      ...state,
+      employees: [...state.employees.filter(employee => employee.userId != updatedUser.userId), updatedUser],
+      isLoadingData: false,
+    }));
     return updatedUser;
+  },
+  createEmployee: async (newEmployee: UserEmployeeProfile) => {
+    console.log({newEmployee});
+    
+    set((state) => ({
+      ...state,
+      isLoadingData: true,
+    }));
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/employees-profile`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer TOKEN",
+        },
+        body: JSON.stringify(newEmployee),
+      }
+    );
+
+    const updatedUser = await response.json()
+    set((state) => ({
+      ...state,
+      employees: [...state.employees, updatedUser],
+      isLoadingData: false,
+    }));
+   
   },
   deleteEmployee: async (employeeId) => {
     throw Error("UnImplemented function");

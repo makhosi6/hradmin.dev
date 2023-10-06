@@ -38,8 +38,7 @@ describe("Users CRUD routes - /api/users/", () => {
     const user =   {
         id: "4",
         username: "john",
-        first_name: "John",
-        last_name: "Smith",
+        name: "John",
         email: "jd@example.com",
         password: "Password123#",
       };
@@ -61,9 +60,8 @@ describe("Users CRUD routes - /api/users/", () => {
     /// Arrange
     const user =   {
         id: "4",
-        username: "john",
-        first_name: "John",
-        last_name: "Smith",
+        username: "john23",
+        name: "John",
         email: "jd@example.com",
         password: "Password123#",
       };

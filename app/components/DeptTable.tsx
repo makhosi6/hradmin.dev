@@ -1,4 +1,7 @@
-import { MagnifyingGlassIcon, ArchiveBoxIcon } from "@heroicons/react/24/outline";
+import {
+  MagnifyingGlassIcon,
+  ArchiveBoxIcon,
+} from "@heroicons/react/24/outline";
 import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
 import {
   Card,
@@ -18,80 +21,38 @@ import {
   Select,
   Option,
 } from "@/app/theme";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ItemsShowPerPage from "./ItemsShowPerPage";
+import { Dept, UserEmployeeProfile } from "../global_types";
+import { statusAsBool } from "../helpers";
+import { employees } from "../api/data";
+import { useEmployeesStore } from "../store/employees";
 
-const TABS = [
-  {
-    label: "All",
-    value: "all",
-  },
-  {
-    label: "Monitored",
-    value: "monitored",
-  },
-  {
-    label: "Unmonitored",
-    value: "unmonitored",
-  },
-];
+const TABLE_HEAD = ["#", "Name", "Status", "Manager", "Actions"];
 
-const TABLE_HEAD = ["Member", "Function", "Status", "Employed", "Actions"];
+type Props = {
+  filteredDeptList: Array<Dept>;
+  managers: Array<UserEmployeeProfile>
+};
 
-const TABLE_ROWS = [
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    job: "Manager",
-    org: "Organization",
-    online: true,
-    date: "23/04/18",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-2.jpg",
-    name: "Alexa Liras",
-    email: "alexa@creative-tim.com",
-    job: "Programator",
-    org: "Developer",
-    online: false,
-    date: "23/04/18",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-1.jpg",
-    name: "Laurent Perrier",
-    email: "laurent@creative-tim.com",
-    job: "Executive",
-    org: "Projects",
-    online: false,
-    date: "19/09/17",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-4.jpg",
-    name: "Michael Levi",
-    email: "michael@creative-tim.com",
-    job: "Programator",
-    org: "Developer",
-    online: true,
-    date: "24/12/08",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-5.jpg",
-    name: "Richard Gran",
-    email: "richard@creative-tim.com",
-    job: "Manager",
-    org: "Executive",
-    online: false,
-    date: "04/10/21",
-  },
-];
+export function DeptTable({ filteredDeptList, managers }: Props) {
 
-export function DeptTable() {
+
+  function getManager(id: string): UserEmployeeProfile | null {
+    const manager = managers.filter((_manager) => _manager.userId === id);
+    return manager.length > 0 ? manager[0] : null;
+  }
+  console.log({ filteredDeptList });
+
   return (
     <Card className="h-full w-full">
-      <CardHeader floated={false} shadow={false} className="rounded-none overflow-visible">
+      <CardHeader
+        floated={false}
+        shadow={false}
+        className="rounded-none overflow-visible"
+      >
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row mt-2">
-          <ItemsShowPerPage/>
+          <ItemsShowPerPage />
           <div className="w-full md:w-72">
             <Input
               label="Search"
@@ -122,88 +83,80 @@ export function DeptTable() {
             </tr>
           </thead>
           <tbody>
-            {TABLE_ROWS.map(
-              ({ img, name, email, job, org, online, date }, index) => {
-                const isLast = index === TABLE_ROWS.length - 1;
-                const classes = isLast
-                  ? "p-4"
-                  : "p-4 border-b border-blue-gray-50";
-
-                return (
-                  <tr key={name}>
-                    <td className={classes}>
-                      <div className="flex items-center gap-3">
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {name}
-                          </Typography>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal opacity-70"
-                          >
-                            {email}
-                          </Typography>
-                        </div>
-                      </div>
-                    </td>
-                    <td className={classes}>
+            {filteredDeptList.map(({ id, name, status, manager_id }, index) => {
+              const isLast = index === filteredDeptList.length - 1;
+              const classes = isLast
+                ? "p-4"
+                : "p-4 border-b border-blue-gray-50";
+              const manager = getManager(`${manager_id}`);
+              return (
+                <tr key={id}>
+                  <td className={classes}>
+                    <div className="flex items-center gap-3">
                       <div className="flex flex-col">
                         <Typography
                           variant="small"
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {job}
-                        </Typography>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal opacity-70"
-                        >
-                          {org}
+                          {index + 1}
                         </Typography>
                       </div>
-                    </td>
-                    <td className={classes}>
-                      <div className="w-max">
-                        <Chip
-                          variant="ghost"
-                          size="sm"
-                          value={online ? "online" : "offline"}
-                          color={online ? "green" : "blue-gray"}
-                        />
-                      </div>
-                    </td>
-                    <td className={classes}>
+                    </div>
+                  </td>
+                  <td className={classes}>
+                    <div className="flex flex-col">
                       <Typography
                         variant="small"
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {date}
+                        {name}
                       </Typography>
-                    </td>
-                    <td className={classes}>
-                      <Tooltip content="Edit User">
-                        <IconButton variant="text">
-                          <PencilIcon className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip content="Disable User">
-                        <IconButton variant="text">
-                          <ArchiveBoxIcon className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                    </td>
-                  </tr>
-                );
-              }
-            )}
+                    </div>
+                  </td>
+                  <td className={classes}>
+                    <div className="w-max">
+                      <Chip
+                        variant="ghost"
+                        size="sm"
+                        value={statusAsBool(status) ? "ACTIVE" : "INACTIVE"}
+                        color={statusAsBool(status) ? "green" : "blue-gray"}
+                      />
+                    </div>
+                  </td>
+                  <td className={classes}>
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {`${manager?.name} (${manager?.username}) ${manager_id}`}
+                    </Typography>
+
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal"
+                    >
+                      {`${manager?.email})`}
+                    </Typography>
+                  </td>
+                  <td className={classes}>
+                    <Tooltip content="Edit User">
+                      <IconButton variant="text">
+                        <PencilIcon className="h-4 w-4" />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip content="Disable User">
+                      <IconButton variant="text">
+                        <ArchiveBoxIcon className="h-4 w-4" />
+                      </IconButton>
+                    </Tooltip>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </CardBody>
@@ -223,4 +176,3 @@ export function DeptTable() {
     </Card>
   );
 }
-

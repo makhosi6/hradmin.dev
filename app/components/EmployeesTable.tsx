@@ -1,5 +1,5 @@
 import { MagnifyingGlassIcon, ArchiveBoxIcon } from "@heroicons/react/24/outline";
-import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
+import { PencilIcon } from "@heroicons/react/24/solid";
 import {
   Card,
   IconButton,
@@ -10,83 +10,26 @@ import {
   CardFooter,
   Chip,
   CardHeader,
-  Tabs,
-  TabsHeader,
-  Tab,
-  Avatar,
+
   Tooltip,
-  Select,
-  Option,
 } from "@/app/theme";
 import React, { useState } from "react";
 import ItemsShowPerPage from "./ItemsShowPerPage";
+import { Dept, UserEmployeeProfile } from "../global_types";
+import { useDeptStore } from "../store/depts";
 
-const TABS = [
-  {
-    label: "All",
-    value: "all",
-  },
-  {
-    label: "Monitored",
-    value: "monitored",
-  },
-  {
-    label: "Unmonitored",
-    value: "unmonitored",
-  },
-];
 
-const TABLE_HEAD = ["Member", "Function", "Status", "Employed", "Actions"];
+const TABLE_HEAD = ["Member", "Department", "Status", "Role", "Actions"];
 
-const TABLE_ROWS = [
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    job: "Manager",
-    org: "Organization",
-    online: true,
-    date: "23/04/18",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-2.jpg",
-    name: "Alexa Liras",
-    email: "alexa@creative-tim.com",
-    job: "Programator",
-    org: "Developer",
-    online: false,
-    date: "23/04/18",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-1.jpg",
-    name: "Laurent Perrier",
-    email: "laurent@creative-tim.com",
-    job: "Executive",
-    org: "Projects",
-    online: false,
-    date: "19/09/17",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-4.jpg",
-    name: "Michael Levi",
-    email: "michael@creative-tim.com",
-    job: "Programator",
-    org: "Developer",
-    online: true,
-    date: "24/12/08",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-5.jpg",
-    name: "Richard Gran",
-    email: "richard@creative-tim.com",
-    job: "Manager",
-    org: "Executive",
-    online: false,
-    date: "04/10/21",
-  },
-];
 
-export function EmployeesTable() {
+type Props = {
+  employeesList: Array<UserEmployeeProfile>;
+  getOneDept: (deptId: string) => Dept | null;
+}
+
+export function EmployeesTable({employeesList, getOneDept}: Props) {
+
+
   return (
     <Card className="h-full w-full">
       <CardHeader floated={false} shadow={false} className="rounded-none overflow-visible">
@@ -122,9 +65,9 @@ export function EmployeesTable() {
             </tr>
           </thead>
           <tbody>
-            {TABLE_ROWS.map(
-              ({ img, name, email, job, org, online, date }, index) => {
-                const isLast = index === TABLE_ROWS.length - 1;
+            {employeesList.map(
+              ({  name, email, username, role, employee_details: {department,isActive} }, index) => {
+                const isLast = index === employeesList.length - 1;
                 const classes = isLast
                   ? "p-4"
                   : "p-4 border-b border-blue-gray-50";
@@ -139,7 +82,7 @@ export function EmployeesTable() {
                             color="blue-gray"
                             className="font-normal"
                           >
-                            {name}
+                            {`${name} (${username})`}
                           </Typography>
                           <Typography
                             variant="small"
@@ -158,15 +101,10 @@ export function EmployeesTable() {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {job}
+                          {getOneDept(`${department[0]}`)?.name 
+                          || "Dept name"}
                         </Typography>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal opacity-70"
-                        >
-                          {org}
-                        </Typography>
+              
                       </div>
                     </td>
                     <td className={classes}>
@@ -174,8 +112,8 @@ export function EmployeesTable() {
                         <Chip
                           variant="ghost"
                           size="sm"
-                          value={online ? "online" : "offline"}
-                          color={online ? "green" : "blue-gray"}
+                          value={isActive ? "Active" : "InActive"}
+                          color={isActive ? "green" : "blue-gray"}
                         />
                       </div>
                     </td>
@@ -185,7 +123,7 @@ export function EmployeesTable() {
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {date}
+                        {role}
                       </Typography>
                     </td>
                     <td className={classes}>

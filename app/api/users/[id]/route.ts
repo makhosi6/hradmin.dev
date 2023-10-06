@@ -1,9 +1,10 @@
 import { NextRequest } from "next/server";
-import { users } from "../../data";
+import { employees, users } from "../../data";
 
 export async function GET(request: Request) {
   const id = new URL(request.url).pathname.split("/").pop()
-  return Response.json(users[0]);
+  const random = Math.floor(Math.random() * employees.length)
+  return Response.json(users[random]);
 }
 
 export async function DELETE(request: Request) {

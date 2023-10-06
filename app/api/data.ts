@@ -5,18 +5,19 @@ export const departments: Array<Dept> = [
     id: "1",
     name: "HR",
     status: "Active",
+    manager_id: "4",
   },
   {
     id: "2",
     name: "Finance",
     status: "Active",
-    manager_id: "1",
+    manager_id: "2",
   },
   {
     id: "3",
     name: "Marketing",
     status: "Active",
-    manager_id: "4",
+    manager_id: "2",
   },
   {
     id: "4",
@@ -28,7 +29,13 @@ export const departments: Array<Dept> = [
     id: "5",
     name: "Management",
     status: "Active",
-    manager_id: "1",
+    manager_id: "2",
+  },
+  {
+    id: "6",
+    name: "R&D",
+    status: "InActive",
+    manager_id: "2",
   },
 ];
 
@@ -36,32 +43,35 @@ export const users: Array<User> = [
   {
     id: "1",
     username: "john_doe",
-    first_name: "John",
-    last_name: "Doe",
+    name: "John",
     email: "john.doe@example.com",
     password: "",
   },
   {
     id: "2",
     username: "jane21",
-    first_name: "Jane",
-    last_name: "Doe",
+    name: "Jane",
     email: "jd@example.com",
+    password: "",
+  },
+  {
+    id: "4",
+    username: "bob",
+    name: "Robert",
+    email: "bob@example.com",
     password: "",
   },
   {
     id: "3",
     username: "super1",
-    first_name: "HR",
-    last_name: "Admin",
+    name: "HR",
     email: "hradmin@test.com",
     password: "TestPass1234",
   },
   {
     id: "4",
     username: "john",
-    first_name: "John",
-    last_name: "Smith",
+    name: "John",
     email: "jd@example.com",
     password: "Password123#",
   },
@@ -79,10 +89,17 @@ export const employees: Array<Employee> = [
   },
   {
     id: "2",
-    userId: "3",
+    userId: "2",
     role: "manager", // ("employee" "manager," or "HR Administrator")
     isActive: true,
     deptId: ["4"],
+  },
+  {
+    id: "4",
+    userId: "4",
+    role: "manager", // ("employee" "manager," or "HR Administrator")
+    isActive: true,
+    deptId: ["1"],
   },
 ];
 //use to process outgoing data
@@ -100,8 +117,7 @@ export const aggregateUserEmployeeProfile = ({
   return {
   userId: user.id,
   username: user.username,
-  first_name: user.first_name,
-  last_name: user.last_name,
+  name: user.name,
   email: user.email,
   role: employee.role,
   employee_details: {
@@ -119,10 +135,9 @@ export const deconstructUserEmployeeProfile = (
     employee_details,
     userId,
     role,
-    username,
     email,
-    last_name,
-    first_name,
+    username,
+    name,
   } = userEmployeeProfile;
 
   console.log({employee_details, userEmployeeProfile});
@@ -130,17 +145,16 @@ export const deconstructUserEmployeeProfile = (
   /// employee from 'userEmployeeProfile'
   const employee: Employee = {
     isActive: employee_details.isActive,
-    id: employee_details.employee_id,
-    userId,
+    id: `${employee_details.employee_id}`,
+    userId: `${userId}`,
     role,
     deptId: employee_details.department,
   };
   /// user from 'userEmployeeProfile'
   const user: User = {
-    id: userId,
+    id: employee.userId,
     username,
-    first_name,
-    last_name,
+    name,
     email,
     password: null,
   };
@@ -153,13 +167,12 @@ export const deconstructUserEmployeeProfile = (
 export const userEmployeeProfile: UserEmployeeProfile = {
   userId: "1",
   username: "john_doe",
-  first_name: "John",
-  last_name: "Doe",
+  name: "John",
   email: "john.doe@example.com",
   role: "employee",
   employee_details: {
     employee_id: "101",
-    department: [],
+    department: ['1'],
     isActive: true,
   },
 };

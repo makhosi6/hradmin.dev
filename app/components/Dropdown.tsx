@@ -7,19 +7,19 @@ import { register } from "module";
 type Props = {
   label: string;
   fieldName: string;
-  registerInputs: (value: string)=> void
+  onChange: (value: any)=> void
   options: Array<{
     id:string,
-    value: string
+    value: any
   }>;
 };
 
-export function InputWithDropdown({  options, label, registerInputs, fieldName }: Props) {
+export function InputWithDropdown({  options, label, onChange, fieldName }: Props) {
   return (
     <div className="relative flex w-full max-w-[24rem] my-4">
-      <Select onChange={(value)=> registerInputs(`${value}`)} variant="outlined" label={label}>
-        {options.map((option) => (
-          <Option value={option.id} key={option.id}>{option.value}</Option>
+      <Select onChange={(value)=> onChange(`${value}`)} variant="outlined" label={label}>
+        {options.map((option, index) => (
+          <Option key={option.id + `_${index}`} value={option.id} >{option.value}</Option>
         ))}
       </Select>
     </div>

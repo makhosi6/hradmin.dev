@@ -5,15 +5,68 @@ import { create } from "zustand";
 
 type DeptState = {
   departments: Array<Dept>;
-  getOne: (deptId: string) => Promise<Dept | null>;
+  getOne: (deptId: string) => Dept | null;
   isLoadingData: boolean;
   setAllDept: () => Promise<void>;
+  createDept: (dept: Dept) => Promise<void>;
+  updateDept: (dept: Dept) => Promise<void>;
 };
 
 export const useDeptStore = create<DeptState>((set, get) => ({
   isLoadingData: false,
   departments: [],
-  getOne: async (deptId) => {
+  updateDept: async (dept: Dept) => {
+    /// loading state
+    set((state) => ({ ...state, isLoadingData: true }));
+
+    ///
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/departments`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer TOKEN",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dept),
+      }
+    );
+    if (response.status === 200 || response.status === 201) {
+      set((state) => ({
+        ...state,
+        departments: [
+          ...state.departments.filter((_dept) => _dept.id !== dept.id),
+          dept,
+        ],
+      }));
+    }
+
+    set((state) => ({ ...state, isLoadingData: false }));
+  },
+  createDept: async (dept: Dept) => {
+    /// loading state
+    set((state) => ({ ...state, isLoadingData: true }));
+
+    ///
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/departments`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer TOKEN",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dept),
+      }
+    );
+    const data = await response.json();
+    if (response.status === 200 || response.status === 201) {
+      set((state) => ({ ...state, departments: [...state.departments, data] }));
+    }
+    set((state) => ({ ...state, isLoadingData: false }));
+  },
+  getOne:  (deptId) => {
+    
     const data = get().departments.filter((dept) => dept.id === deptId);
     if (data.length == 0) return null;
     return data[0];

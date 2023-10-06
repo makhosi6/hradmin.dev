@@ -1,5 +1,5 @@
 export type Dept = {
-  id: string;
+  id?: string;
   name: string;
   status: string;
   manager_id?: string;
@@ -13,14 +13,13 @@ export type FetchParams = {
 };
 
 export type UserEmployeeProfile = {
-  userId: string;
+  userId?: string;
   username: string;
-  first_name: string;
-  last_name: string;
+  name: string;
   email: string;
   role: string;
   employee_details: {
-    employee_id: string;
+    employee_id?: string;
     department: string[];
     isActive: boolean;
   };
@@ -36,9 +35,8 @@ export type Employee = {
 
 export type User = {
   id: string;
+  name: string;
   username: string;
-  first_name: string;
-  last_name: string;
   email: string;
   password: string | null;
 };
@@ -49,11 +47,16 @@ export type EmployeeReqParams = {
   page?: string | null;
 };
 
-export enum Status {
-  active,
-  inactive,
-}
-
+export const Status = {
+  active: "active",
+  inactive: "inactive",
+};
+export const Role = {
+  employee: "employee",
+  manager: "manager",
+  admin: "admin",
+  other: "other",
+};
 export type UserProfileReqParams = {
   employeeId?: string | null;
   page?: string | null;

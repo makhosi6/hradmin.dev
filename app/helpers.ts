@@ -1,4 +1,4 @@
-import { FetchParams } from "./global_types";
+import { FetchParams, Status } from "./global_types";
 
 export const fetchWrapper = async ({
   method,
@@ -14,11 +14,12 @@ export const fetchWrapper = async ({
       process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3002/api";
     let url = new URL(`${baseUrl}/${collection}/${path}`);
 
-    console.log({URL: url.toString()});
-    
-    Object.keys(requestParams).forEach((key) =>
-      url.searchParams.append(key, requestParams[key])
-    );
+    console.log({ URL: url.toString(), requestParams });
+    if (JSON.stringify(requestParams) != "{}") {
+      Object.keys(requestParams).forEach((key) =>
+        url.searchParams.append(key, requestParams[key])
+      );
+    }
 
     const response = await fetch(url, {
       method,
@@ -35,3 +36,8 @@ export const fetchWrapper = async ({
     null;
   }
 };
+
+
+export function statusAsBool(status: string){
+  return status.toLowerCase() == Status.active
+}

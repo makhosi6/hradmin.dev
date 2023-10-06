@@ -31,8 +31,7 @@ describe("UserEmployeeProfile CRUD routes - /api/employees-profile/", () => {
     const userEmployeeProfile = {
       userId: "1",
       username: "john_doe",
-      first_name: "John",
-      last_name: "Doe",
+      name: "John",
       email: "john.doe@example.com",
       role: "employee",
       employee_details: {
@@ -68,8 +67,7 @@ describe("UserEmployeeProfile CRUD routes - /api/employees-profile/", () => {
     const userEmployeeProfile = {
       userId: "1",
       username: "john_doe",
-      first_name: "John",
-      last_name: "Doe",
+      name: "John",
       email: "john.doe@example.com",
       role: "employee",
       employee_details: {
