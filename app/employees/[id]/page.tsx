@@ -25,11 +25,14 @@ type Props = {
 };
 
 export default function Employee({ params: { id } }: Props) {
+  const [defaultValues, setDefaultValues] = useState<
+    UserEmployeeProfile | undefined
+  >(undefined);
   const [managers, setManagers] = useState<UserEmployeeProfile[]>([]);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const { getAllEmployeesByEmployeesRole, createEmployee } =
+  const { getAllEmployeesByEmployeesRole, createEmployee, getEmployee } =
     useEmployeesStore();
-  const { isLoadingData, } = useEmployeesStore();
+  const { isLoadingData, employees } = useEmployeesStore();
   const { validateEmail } = useUserStore();
   const {
     register,
@@ -37,13 +40,27 @@ export default function Employee({ params: { id } }: Props) {
     watch,
     reset,
     setValue,
-    formState: { errors, isValid, },
-  } = useForm<InputFields>();
+    trigger,
+    formState: { errors, isValid },
+  } = useForm<InputFields>({
+    defaultValues: {
+      status: Status.active,
+    },
+  });
 
   useEffect(() => {
+    if (id !== "new") {
+      console.log("IFIF");
+
+      setDefaultValues(employees.filter((empl) => empl.userId === id)[0]);
+    } else {
+      console.log("ELSE");
+    }
+
     getAllEmployeesByEmployeesRole("manager")
       .then(setManagers)
       .catch(console.warn);
+    trigger();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -65,6 +82,7 @@ export default function Employee({ params: { id } }: Props) {
           department: dept,
           isActive: Status.active === data.status,
         },
+        phoneNumber: data.phoneNumber,
       });
 
       reset();
@@ -79,7 +97,9 @@ export default function Employee({ params: { id } }: Props) {
             console.log({ isEmailValid });
 
             if (!isEmailValid) {
-              setEmailError(`Sorry! this email is already used (${data.email})`);
+              setEmailError(
+                `Sorry! this email is already used (${data.email})`
+              );
             } else {
               setEmailError(null);
             }
@@ -99,7 +119,10 @@ export default function Employee({ params: { id } }: Props) {
               <h3>Create/Update Employee</h3>
               <Input
                 key="name"
-                {...register("name", { required: true })}
+                {...register("name", {
+                  required: true,
+                })}
+                defaultValue={defaultValues?.name}
                 color="black"
                 variant="outlined"
                 label="Name"
@@ -108,6 +131,7 @@ export default function Employee({ params: { id } }: Props) {
               />
               <Input
                 key="username"
+                defaultValue={defaultValues?.username}
                 {...register("username", { required: true })}
                 color="black"
                 variant="outlined"
@@ -117,6 +141,7 @@ export default function Employee({ params: { id } }: Props) {
               />
               <Input
                 key="email"
+                defaultValue={defaultValues?.email}
                 {...register("email", { required: true })}
                 color="black"
                 variant="outlined"
@@ -126,7 +151,8 @@ export default function Employee({ params: { id } }: Props) {
               />
               <Input
                 key="phoneNumber"
-                {...register("phoneNumber", { required: true })}
+                {...register("phoneNumber", { required: true, minLength: 10 })}
+                defaultValue={defaultValues?.phoneNumber}
                 color="black"
                 variant="outlined"
                 label="Phone Number"
@@ -136,6 +162,7 @@ export default function Employee({ params: { id } }: Props) {
               />
               <InputWithDropdown
                 key="role"
+                defaultValue={defaultValues?.role}
                 fieldName="Role"
                 onChange={(value) =>
                   setValue("role", value, {
@@ -168,25 +195,39 @@ export default function Employee({ params: { id } }: Props) {
                   };
                 })}
               />
-              <InputWithDropdown
-                key="status"
-                fieldName="Status"
-                onChange={(value) =>
-                  setValue("status", value, {
-                    shouldValidate: true,
-                    shouldTouch: true,
-                  })
-                }
-                label="Status"
-                options={[
-                  { value: Status.active.toUpperCase(), id: Status.active },
-                  { value: Status.inactive.toUpperCase(), id: Status.inactive },
-                ]}
-              />
+              {defaultValues && (
+                <InputWithDropdown
+                  key="status"
+                  fieldName="Status"
+                  defaultValue={
+                    defaultValues?.employee_details.isActive
+                      ? Status.active
+                      : Status.inactive
+                  }
+                  onChange={(value) =>
+                    setValue("status", value, {
+                      shouldValidate: true,
+                      shouldTouch: true,
+                    })
+                  }
+                  label="Status"
+                  options={[
+                    { value: Status.active.toUpperCase(), id: Status.active },
+                    {
+                      value: Status.inactive.toUpperCase(),
+                      id: Status.inactive,
+                    },
+                  ]}
+                />
+              )}
               <div>
                 <p key={"errors"} className="mt-2 text-red-300">
-                  {(emailError || errors.name || !isValid) && (
-                    <span> {emailError || "All fields are required"}</span>
+                  {(emailError || !isValid) && (
+                    <span>
+                      {" "}
+                      {emailError ||
+                        "All fields are required | phone should be 10 digits long"}
+                    </span>
                   )}
                 </p>
               </div>

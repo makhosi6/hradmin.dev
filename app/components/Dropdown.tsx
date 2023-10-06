@@ -7,6 +7,7 @@ import { register } from "module";
 type Props = {
   label: string;
   fieldName: string;
+  defaultValue?: string | null;
   onChange: (value: any) => void;
   options: Array<{
     id: string;
@@ -19,10 +20,13 @@ export function InputWithDropdown({
   label,
   onChange,
   fieldName,
+  defaultValue,
 }: Props) {
   return (
     <div className="relative flex w-full max-w-[24rem] my-4">
       <Select
+      value={defaultValue || undefined}
+        defaultValue={defaultValue || undefined}
         onChange={(value) => onChange(`${value}`)}
         variant="outlined"
         label={label}

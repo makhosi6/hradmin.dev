@@ -25,7 +25,8 @@ export default function MenuButton() {
   const { logOut, isLoadingData } = useUserStore();
   const { setAllDept } = useDeptStore();
   const { currentUser } = useUserStore();
-  const { getAllEmployeesByEmployeesManagerId } = useEmployeesStore();
+  const { getAllEmployeesByEmployeesManagerId, addEmployee } =
+    useEmployeesStore();
 
   useEffect(() => {
     const url = `${pathname}?${searchParams}`;
@@ -39,8 +40,11 @@ export default function MenuButton() {
   }, [currentUser, pathname, router, searchParams]);
 
   useEffect(() => {
-    if (currentUser?.role == "manager" || currentUser?.role == "admin")
+    if (currentUser?.role == "manager" || currentUser?.role == "admin") {
       getAllEmployeesByEmployeesManagerId(`${currentUser?.userId}`);
+    } else {
+      addEmployee(currentUser!);
+    }
     setAllDept();
   }, [setAllDept, currentUser]);
 
@@ -59,50 +63,6 @@ export default function MenuButton() {
           </MenuHandler>
 
           <MenuList>
-            <MenuItem className="flex items-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                aria-hidden="true"
-                className="h-[18px] w-[18px]"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75l2.25-1.313M12 21.75V19.5m0 2.25l-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25"
-                ></path>
-              </svg>
-              <Link href={"/departments/new"}>
-                <Typography variant="small" className="font-normal">
-                  Create a Department
-                </Typography>
-              </Link>
-            </MenuItem>
-            <MenuItem className="flex items-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                aria-hidden="true"
-                className="h-[18px] w-[18px]"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75l2.25-1.313M12 21.75V19.5m0 2.25l-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25"
-                ></path>
-              </svg>
-              <Link href={"/employees/new"}>
-                <Typography variant="small" className="font-normal">
-                  Create a Employee
-                </Typography>
-              </Link>
-            </MenuItem>
             <MenuItem className="flex items-center gap-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -147,6 +107,51 @@ export default function MenuButton() {
                 </Typography>
               </Link>
             </MenuItem>
+            <MenuItem className="flex items-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+                className="h-[18px] w-[18px]"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75l2.25-1.313M12 21.75V19.5m0 2.25l-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25"
+                ></path>
+              </svg>
+              <Link href={"/departments/new"}>
+                <Typography variant="small" className="font-normal">
+                  Create a Department
+                </Typography>
+              </Link>
+            </MenuItem>
+            <MenuItem className="flex items-center gap-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+                className="h-[18px] w-[18px]"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 7.5l-2.25-1.313M21 7.5v2.25m0-2.25l-2.25 1.313M3 7.5l2.25-1.313M3 7.5l2.25 1.313M3 7.5v2.25m9 3l2.25-1.313M12 12.75l-2.25-1.313M12 12.75V15m0 6.75l2.25-1.313M12 21.75V19.5m0 2.25l-2.25-1.313m0-16.875L12 2.25l2.25 1.313M21 14.25v2.25l-2.25 1.313m-13.5 0L3 16.5v-2.25"
+                ></path>
+              </svg>
+              <Link href={"/employees/new"}>
+                <Typography variant="small" className="font-normal">
+                  Create a Employee
+                </Typography>
+              </Link>
+            </MenuItem>
+
             <hr className="my-2 border-blue-gray-50" />
             <MenuItem
               disabled={isLoadingData}

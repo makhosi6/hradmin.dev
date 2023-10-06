@@ -23,10 +23,12 @@ import {
 } from "@/app/theme";
 import React, { useEffect, useState } from "react";
 import ItemsShowPerPage from "./ItemsShowPerPage";
-import { Dept, UserEmployeeProfile } from "../global_types";
+import { Dept, Status, UserEmployeeProfile } from "../global_types";
 import { statusAsBool } from "../helpers";
 import { employees } from "../api/data";
 import { useEmployeesStore } from "../store/employees";
+import { useDeptStore } from "../store/depts";
+import Link from "next/link";
 
 const TABLE_HEAD = ["#", "Name", "Status", "Manager", "Actions"];
 
@@ -38,7 +40,7 @@ type Props = {
 export function DeptTable({ filteredDeptList, managers }: Props) {
   const [page, setPage] = useState(1);
   const [itemsShownPerPage, setItemsShownPerPage] = useState(10);
-
+  const { updateDept } = useDeptStore();
   function getManager(id: string): UserEmployeeProfile | null {
     const manager = managers.filter((_manager) => _manager.userId === id);
     console.log({ manager, id, managers });
@@ -46,10 +48,9 @@ export function DeptTable({ filteredDeptList, managers }: Props) {
   }
 
   ///
-  const OFFSET = (page - 1) * itemsShownPerPage
+  const OFFSET = (page - 1) * itemsShownPerPage;
   const LIMIT = OFFSET + itemsShownPerPage;
   const MAX_PAGES = Math.ceil(filteredDeptList.length / itemsShownPerPage);
-
 
   return (
     <Card className="h-full w-full">
@@ -92,7 +93,8 @@ export function DeptTable({ filteredDeptList, managers }: Props) {
           <tbody>
             {filteredDeptList
               .slice(OFFSET, LIMIT)
-              .map(({ id, name, status, manager_id }, index) => {
+              .sort((a, b) => (a?.createdAt || 0) - (b?.createdAt || 0))
+              .map(({ id, name, status, manager_id ,createdAt }, index) => {
                 const isLast = index === filteredDeptList.length - 1;
                 const classes = isLast
                   ? "p-4"
@@ -154,13 +156,31 @@ export function DeptTable({ filteredDeptList, managers }: Props) {
                       </Typography>
                     </td>
                     <td key={5} className={classes}>
-                      <Tooltip key={"edit_btn"} content="Edit User">
-                        <IconButton variant="text">
-                          <PencilIcon className="h-4 w-4" />
-                        </IconButton>
+                      <Tooltip key={"edit_btn"} content="Edit Dept">
+                        <Link href={"departments/" + id}>
+                          <IconButton variant="text">
+                            <PencilIcon className="h-4 w-4" />
+                          </IconButton>
+                        </Link>
                       </Tooltip>
-                      <Tooltip key={"disable_btn"} content="Disable User">
-                        <IconButton variant="text">
+                      <Tooltip
+                        key={"disable_btn"}
+                        content="Disable/Activate Dept"
+                      >
+                        <IconButton
+                          onClick={() =>
+                            updateDept({
+                              id,
+                              name,
+                              status: statusAsBool(status)
+                                ? Status.inactive
+                                : Status.active,
+                              manager_id,
+                              createdAt,
+                            })
+                          }
+                          variant="text"
+                        >
                           <ArchiveBoxIcon className="h-4 w-4" />
                         </IconButton>
                       </Tooltip>

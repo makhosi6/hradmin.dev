@@ -18,6 +18,7 @@ export const useDeptStore = create<DeptState>((set, get) => ({
   updateDept: async (dept: Dept) => {
     /// loading state
     set((state) => ({ ...state, isLoadingData: true }));
+console.log({dept});
 
     ///
     const response = await fetch(
@@ -31,17 +32,18 @@ export const useDeptStore = create<DeptState>((set, get) => ({
         body: JSON.stringify(dept),
       }
     );
+    const updatedDept = await response.json()
     if (response.status === 200 || response.status === 201) {
       set((state) => ({
         ...state,
         departments: [
           ...state.departments.filter((_dept) => _dept.id !== dept.id),
-          dept,
+          updatedDept,
         ],
       }));
     }
 
-    set((state) => ({ ...state, isLoadingData: false }));
+    set((state) => ({ ...state, isLoadingData: false,  }));
   },
   createDept: async (dept: Dept) => {
     /// loading state

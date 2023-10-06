@@ -1,8 +1,10 @@
+import { create } from "zustand";
 export type Dept = {
   id?: string;
   name: string;
   status: string;
   manager_id?: string;
+  createdAt?: number | null;
 };
 export type FetchParams = {
   method: string;
@@ -16,13 +18,16 @@ export type UserEmployeeProfile = {
   userId?: string;
   username: string;
   name: string;
+  phoneNumber: string;
   email: string;
   role: string;
   employee_details: {
+    createdAt?: number | null;
     employee_id?: string;
     department: string[];
     isActive: boolean;
   };
+  createdAt?: number | null;
 };
 
 export type Employee = {
@@ -31,14 +36,17 @@ export type Employee = {
   role: string;
   isActive: boolean;
   deptId: string[];
+  createdAt?: number | null;
 };
 
 export type User = {
   id: string;
   name: string;
   username: string;
+  phoneNumber: string;
   email: string;
   password: string | null;
+  createdAt: number;
 };
 
 export type EmployeeReqParams = {

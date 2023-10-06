@@ -10,7 +10,7 @@ import {
   Spinner,
 } from "@/app/theme";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Status, UserEmployeeProfile } from "@/app/global_types";
+import { Dept, Status, UserEmployeeProfile } from "@/app/global_types";
 import { InputWithDropdown } from "@/app/components/Dropdown";
 import { useDeptStore } from "@/app/store/depts";
 import { useEmployeesStore } from "@/app/store/employees";
@@ -27,7 +27,10 @@ type Props = {
   };
 };
 
-export default function Dept({ params: { id } }: Props) {
+export default function DeptPage({ params: { id } }: Props) {
+  const [defaultValues, setDefaultValues] = useState<Dept | undefined>(
+    undefined
+  );
   const [managers, setManagers] = useState<UserEmployeeProfile[]>([]);
   const { departments, isLoadingData, createDept, updateDept } = useDeptStore();
   const { getAllEmployeesByEmployeesRole } = useEmployeesStore();
@@ -38,33 +41,44 @@ export default function Dept({ params: { id } }: Props) {
     getFieldState,
     setValue,
     getValues,
+    trigger,
     formState: { errors, isValid, dirtyFields, touchedFields },
-  } = useForm<InputFields>();
+  } = useForm<InputFields>({
+    defaultValues: {
+      status: Status.active,
+    },
+  });
 
   const submitHandler: SubmitHandler<InputFields> = async (data) => {
     if (isValid) {
       console.log("create a dept record and show snackbar");
       const { name, status, manager: manager_id } = getValues();
+      console.log("GEEse", getValues(), isValid, errors);
       await createDept({
         name,
         status,
         manager_id,
       });
-      reset()
+      reset();
     } else {
       console.log("Else complain");
     }
   };
   useEffect(() => {
+    if (id !== "new") {
+      console.log("IFIF", getValues(), isValid);
+
+      setDefaultValues(departments.filter((_dept) => _dept.id === id)[0]);
+    } else {
+      console.log("ELSE");
+    }
     getAllEmployeesByEmployeesRole("manager")
       .then(setManagers)
       .catch(console.warn);
+
+    trigger();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    console.log({ values: getValues(), dirtyFields, touchedFields, errors });
-  }, [dirtyFields, touchedFields, errors, getValues]);
 
   return (
     <div className="flex justify-center items-center h-screen">
@@ -98,44 +112,30 @@ export default function Dept({ params: { id } }: Props) {
                   };
                 })}
               />
-              <InputWithDropdown
-                key={"status"}
-                fieldName="Status"
-                onChange={(value) =>
-                  setValue("status", value, {
-                    shouldValidate: true,
-                    shouldTouch: true,
-                  })
-                }
-                label="Status"
-                options={[
-                  { value: Status.active.toUpperCase(), id: Status.active },
-                  { value: Status.inactive.toUpperCase(), id: Status.inactive },
-                ]}
-              />
+              {defaultValues && (
+                <InputWithDropdown
+                  key={"status"}
+                  fieldName="Status"
+                  onChange={(value) =>
+                    setValue("status", value, {
+                      shouldValidate: true,
+                      shouldTouch: true,
+                    })
+                  }
+                  label="Status"
+                  options={[
+                    { value: Status.active.toUpperCase(), id: Status.active },
+                    {
+                      value: Status.inactive.toUpperCase(),
+                      id: Status.inactive,
+                    },
+                  ]}
+                />
+              )}
               <div>
-                <span key={"span1"} className="mt-2 text-red-300">
-                  {(errors.name || !touchedFields?.name) && (
-                    <span>
-                      {errors?.name?.message || "Name field is required"}
-                    </span>
-                  )}
-                </span>
-                <p key={"span2"} className="text-red-300">
-                  {(errors.manager || !touchedFields?.manager) && (
-                    <span>
-                      {errors?.manager?.message || "Manager field is required"}
-                    </span>
-                  )}
+                <p key={"errors"} className="mt-2 text-red-300">
+                  {!isValid && <span> {"All fields are required"}</span>}
                 </p>
-                <span key={"span3"} className="mt-2 text-red-300">
-                  {(errors.status || !touchedFields?.status) && (
-                    <span>
-                      {errors?.status?.message?.toString() ||
-                        "Status field is required"}
-                    </span>
-                  )}
-                </span>
               </div>
             </div>
           </form>

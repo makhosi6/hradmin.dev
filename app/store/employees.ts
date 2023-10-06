@@ -2,6 +2,7 @@ import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
 import { UserEmployeeProfile } from "../global_types";
 import { stat } from "fs";
+import { employees } from "../api/data";
 
 type EmployeeState = {
   isLoadingData: boolean;
@@ -14,6 +15,7 @@ type EmployeeState = {
   ) => Promise<Array<UserEmployeeProfile>>;
   getEmployee: (employeeId: string) => Promise<UserEmployeeProfile>;
   deleteEmployee: (employeeId: string) => Promise<boolean>;
+  addEmployee: (userProfile: UserEmployeeProfile) => void;
   editEmployee: (
     userProfile: UserEmployeeProfile
   ) => Promise<UserEmployeeProfile>;
@@ -88,6 +90,12 @@ export const useEmployeesStore = create<EmployeeState>((set) => ({
     }));
 
     return data;
+  },
+  addEmployee: (employee: UserEmployeeProfile) => {
+    set((state) => ({
+      ...state,
+      employees: [employee],
+    }));
   },
   editEmployee: async (newEmployee: UserEmployeeProfile) => {
     console.log({ newEmployee });

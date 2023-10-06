@@ -11,7 +11,7 @@ export default function ItemsShowPerPage({ setItemsShownPerPage }: Props) {
     <div>
       <Select
         onChange={(itemsPerPage) =>
-          setItemsShownPerPage(Number(itemsPerPage ?? 10))
+          setItemsShownPerPage(Number(itemsPerPage || 10))
         }
         color="gray"
         animate={{
