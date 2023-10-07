@@ -3,4 +3,6 @@ HR Administration System which allowing users to efficiently manage employee det
 
 
 ### DB docker
- - `docker run -d -p 5984:5984 --name hradmin-dev-couchdb -e COUCHDB_USER=devuser -e COUCHDB_PASSWORD=Pa55w0rd@dev apache/couchdb`
+ - `docker run -d -p 5984:5984 --name hradmin-dev-couchdb -e COUCHDB_USER=devuser -e COUCHDB_PASSWORD=devPa55w0rd apache/couchdb`
+
+ - `docker-compose up -d --remove-orphans --force-recreate`

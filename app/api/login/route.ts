@@ -1,9 +1,11 @@
 import { aggregateUserEmployeeProfile, employees } from "./../data";
 import { fetchWrapper } from "@/app/helpers";
 import { users } from "../data";
+import { usersCollection } from "../db";
 
 export async function POST(request: Request) {
   const { password, email , } = await request.json();
+  console.log({usersCollection});
 
   if (!password || !email) {
     return Response.json(

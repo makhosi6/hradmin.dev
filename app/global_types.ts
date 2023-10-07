@@ -1,11 +1,4 @@
 import { create } from "zustand";
-export type Dept = {
-  id?: string;
-  name: string;
-  status: string;
-  manager_id?: string;
-  createdAt?: number | null;
-};
 export type FetchParams = {
   method: string;
   collection: string;
@@ -27,6 +20,13 @@ export type UserEmployeeProfile = {
     department: string[];
     isActive: boolean;
   };
+  createdAt?: number | null;
+};
+export type Dept = {
+  id?: string;
+  name: string;
+  status: string;
+  manager_id?: string;
   createdAt?: number | null;
 };
 

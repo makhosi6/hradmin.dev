@@ -15,7 +15,7 @@
     "@heroicons/react": "^2.0.18",
     "@material-tailwind/react": "^2.1.2",
     "bcrypt": "^5.1.1",
-    "nano": "^10.1.2",
+    "mongodb": "^6.1.0",
     "next": "latest",
     "next-pwa": "^5.6.0",
     "node-mocks-http": "^1.13.0",
