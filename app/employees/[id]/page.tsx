@@ -16,7 +16,7 @@ type InputFields = {
   phoneNumber: string;
   email: string;
   role: string;
-  manager: string;
+  manager: string | undefined;
   status: string;
 };
 
@@ -27,14 +27,18 @@ type Props = {
 };
 
 export default function Employee({ params: { id } }: Props) {
-  const router = useRouter()
+  const router = useRouter();
   const [defaultValues, setDefaultValues] = useState<
     UserEmployeeProfile | undefined
   >(undefined);
   const [managers, setManagers] = useState<UserEmployeeProfile[]>([]);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const { getAllEmployeesByEmployeesRole, createEmployee, getEmployee } =
-    useEmployeesStore();
+  const {
+    getAllEmployeesByEmployeesRole,
+    createEmployee,
+    editEmployee,
+    getEmployee,
+  } = useEmployeesStore();
   const { isLoadingData, employees } = useEmployeesStore();
   const { showSnackBar } = useSnackbarController();
   const { validateEmail, currentUser } = useUserStore();
@@ -44,6 +48,7 @@ export default function Employee({ params: { id } }: Props) {
     watch,
     reset,
     setValue,
+    getValues,
     trigger,
     formState: { errors, isValid },
   } = useForm<InputFields>({
@@ -72,19 +77,40 @@ export default function Employee({ params: { id } }: Props) {
       const dept =
         manager.length > 0 ? manager[0].employee_details.department : [];
 
-      await createEmployee({
-        username: data.username,
-        name: data.name,
-        email: data.email,
-        role: data.role,
-        employee_details: {
-          department: dept,
-          isActive: Status.active === data.status,
-        },
-        phoneNumber: data.phoneNumber,
-      });
+      const values = getValues();
+      if (defaultValues) {
+        await editEmployee({
+          ...defaultValues,
+          userId: defaultValues.userId,
+          username: values.username,
+          name: values.name,
+          phoneNumber: values.phoneNumber,
+          email: values.email,
+          role: values.role,
+          employee_details: {
+            createdAt: defaultValues.employee_details?.createdAt,
+            employee_id: defaultValues.employee_details.employee_id,
+            department: dept ?? defaultValues.employee_details.department,
+            isActive: values.status == Status.active,
+          },
+          createdAt: defaultValues.createdAt,
+        });
+      } else {
+        await createEmployee({
+          username: data.username,
+          name: data.name,
+          email: data.email,
+          role: data.role,
+          password: "",
+          employee_details: {
+            department: dept,
+            isActive: Status.active === data.status,
+          },
+          phoneNumber: data.phoneNumber,
+        });
+      }
       showSnackBar({
-        message: "Employee created (" + data.email + ")",
+        message: "Employee created/updated (" + data.email + ")",
         show: true,
         snackBarTheme: "success",
       });
@@ -110,7 +136,6 @@ export default function Employee({ params: { id } }: Props) {
     return () => subscription.unsubscribe();
   }, [validateEmail, watch]);
 
-  
   return (
     <div className="flex justify-center items-center h-screen">
       <Card className={"mt-6 w-96" + (isLoadingData ? " blur-sm " : "")}>
@@ -181,14 +206,14 @@ export default function Employee({ params: { id } }: Props) {
               />
               <InputWithDropdown
                 key="manager"
-                fieldName="Manager"
+                fieldName="Manager (optional)"
                 onChange={(value) =>
                   setValue("manager", value, {
                     shouldValidate: true,
                     shouldTouch: true,
                   })
                 }
-                label="Manager"
+                label="Manager (optional)"
                 options={[...managers, currentUser].map((manager) => {
                   return {
                     value: `${manager?.name} (${manager?.username})`,
@@ -244,7 +269,7 @@ export default function Employee({ params: { id } }: Props) {
           >
             Save
           </Button>
-          <Button onClick={() => router.back()} className="mx-2" variant="outlined">
+          <Button onClick={() => {}} className="mx-2" variant="outlined">
             Cancel
           </Button>
         </CardFooter>

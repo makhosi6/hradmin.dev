@@ -13,8 +13,8 @@ import { useSnackbarController } from "@/app/_store/snackbar";
 
 type InputFields = {
   name: string;
-  manager: string;
-  status: string;
+  manager?: string;
+  status?: string;
 };
 
 type Props = {
@@ -37,29 +37,37 @@ export default function DeptPage({ params: { id } }: Props) {
     register,
     reset,
     handleSubmit,
-    getFieldState,
     setValue,
     getValues,
+
     trigger,
-    formState: { errors, isValid, dirtyFields, touchedFields },
+    formState: { isValid, touchedFields, dirtyFields },
   } = useForm<InputFields>({
     defaultValues: {
-      status: Status.active,
+      ...defaultValues,
+      status: defaultValues?.status || Status.active,
     },
   });
 
   const submitHandler: SubmitHandler<InputFields> = async (data) => {
     if (isValid) {
-      /// TODO:
-      console.log("create a dept record and show snackbar");
       const { name, status, manager: manager_id } = getValues();
-      await createDept({
-        name,
-        status,
-        manager_id,
-      });
+      if (defaultValues) {
+        await updateDept({
+          id,
+          name,
+          status: status || Status.active,
+          manager_id,
+        });
+      } else {
+        await createDept({
+          name,
+          status: status || Status.active,
+          manager_id,
+        });
+      }
       showSnackBar({
-        message: "Success: Record created",
+        message: "Success: Record created/updated",
         show: true,
         snackBarTheme: "success",
       });
@@ -93,6 +101,7 @@ export default function DeptPage({ params: { id } }: Props) {
               <h3>Create/Update Dept</h3>
               <Input
                 {...register("name", { required: true })}
+                defaultValue={defaultValues?.name}
                 color="black"
                 variant="outlined"
                 label="Name"
@@ -101,14 +110,15 @@ export default function DeptPage({ params: { id } }: Props) {
               />
               <InputWithDropdown
                 key={"Manager"}
-                fieldName="Manager"
+                fieldName="Manager (optional)"
+                defaultValue={defaultValues?.manager_id}
                 onChange={(value) =>
                   setValue("manager", value, {
                     shouldValidate: true,
                     shouldTouch: true,
                   })
                 }
-                label="Manager"
+                label="Manager (optional)"
                 options={[...managers, currentUser].map((manager) => {
                   return {
                     value: `${manager?.name} (${manager?.username})`,
@@ -120,6 +130,7 @@ export default function DeptPage({ params: { id } }: Props) {
                 <InputWithDropdown
                   key={"status"}
                   fieldName="Status"
+                  defaultValue={defaultValues?.status}
                   onChange={(value) =>
                     setValue("status", value, {
                       shouldValidate: true,
@@ -138,7 +149,7 @@ export default function DeptPage({ params: { id } }: Props) {
               )}
               <div>
                 <p key={"errors"} className="mt-2 text-red-300">
-                  {!isValid && <span> {"All fields are required"}</span>}
+                  {!isValid && <span> {"Name is required"}</span>}
                 </p>
               </div>
             </div>
@@ -146,7 +157,7 @@ export default function DeptPage({ params: { id } }: Props) {
         </CardBody>
         <CardFooter className="flex items-center justify-end">
           <Button
-            disabled={isLoadingData || !isValid}
+            disabled={ !isValid || isLoadingData || !touchedFields.name || !dirtyFields.name || !Boolean(getValues('name')) }
             onClick={handleSubmit(submitHandler)}
             className="mx-2"
             type="submit"
@@ -154,7 +165,7 @@ export default function DeptPage({ params: { id } }: Props) {
             Save
           </Button>
           <Button
-            onClick={() => router.back()}
+            onClick={() => {}}
             className="mx-2"
             variant="outlined"
           >

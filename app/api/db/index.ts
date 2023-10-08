@@ -23,6 +23,15 @@ const isConnected = async (db: Db) => {
     : false;
 
   if (!(hasClientObj && hasStableConnection)) {
+    process.removeAllListeners("exit");
+    process.removeAllListeners("disconnect");
+    process.on("exit", async (code) => {
+      await global.mongoClient.close();
+    });
+    process.on("disconnect", async () => {
+      await global.mongoClient.close();
+    });
+
     global.mongoClient = new MongoClient(url);
     await global.mongoClient.connect();
     console.log("Connected successfully to server");
@@ -41,10 +50,3 @@ export const employeesCollection = (): Collection<Document> => {
   const db = mongoClient.db(DB_NAME);
   return db.collection("employees");
 };
-
-process.on("exit", async (code) => {
-  await global.mongoClient.close();
-});
-process.on("disconnect", async () => {
-  await global.mongoClient.close();
-});

@@ -1,4 +1,3 @@
-import { userEmployeeProfile } from "../../../app/_store/data";
 import { RequestMethod, createMocks } from "node-mocks-http";
 import {
   POST,

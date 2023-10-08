@@ -139,8 +139,7 @@ const users: Array<User> = [
     createdAt: new Date().getTime(),
   },
 ];
-{
-}
+
 
 const employees: Array<Employee> = [
   {
@@ -176,6 +175,7 @@ const userEmployeeProfile: UserEmployeeProfile = {
   name: "John",
   phoneNumber: "000000000500",
   email: "john.doe@example.com",
+  password: "password222",
   createdAt: new Date().getTime(),
   role: "employee",
   employee_details: {

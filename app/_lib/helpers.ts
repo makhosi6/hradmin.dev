@@ -66,9 +66,10 @@ export const aggregateUserEmployeeProfile = ({
     email: user.email,
     phoneNumber: user.phoneNumber,
     role: employee.role,
+    password: `${user.password}`,
     createdAt: user.createdAt,
     employee_details: {
-      createdAt: employee.createdAt || new Date().getTime(),
+      createdAt: employee.createdAt,
       employee_id: employee.id,
       department: employee.deptId,
       isActive: employee.isActive,
@@ -99,12 +100,10 @@ export const deconstructUserEmployeeProfile = (
     username,
     name,
     email,
-    password: null,
+    password: userEmployeeProfile.password,
     createdAt: new Date().getTime(),
   };
 
   // AND combine them
   return [user, employee];
 };
-
-

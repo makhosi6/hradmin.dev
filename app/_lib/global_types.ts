@@ -14,6 +14,7 @@ export type UserEmployeeProfile = {
   phoneNumber: string;
   email: string;
   role: string;
+  password: string;
   employee_details: {
     createdAt?: number | null;
     employee_id?: string;

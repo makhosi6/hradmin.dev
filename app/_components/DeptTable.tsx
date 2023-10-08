@@ -25,7 +25,6 @@ import React, { useEffect, useState } from "react";
 import ItemsShowPerPage from "./ItemsShowPerPage";
 import { Dept, Status, UserEmployeeProfile } from "../_lib/global_types";
 import { statusAsBool } from "../_lib/helpers";
-import { employees } from "../_store/data";
 import { useEmployeesStore } from "../_store/employees";
 import { useDeptStore } from "../_store/depts";
 import Link from "next/link";

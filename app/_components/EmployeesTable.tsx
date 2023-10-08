@@ -39,7 +39,7 @@ export function EmployeesTable({ employeesList, getOneDept }: Props) {
   const LIMIT = OFFSET + itemsShownPerPage;
   const MAX_PAGES = Math.ceil(employeesList.length / itemsShownPerPage);
 
-  if(employeesList.length < 1) return (<h4>Loading...</h4>)
+  if (employeesList.length < 1) return <h4>Loading...</h4>;
 
   return (
     <Card className="h-full w-full">
@@ -89,7 +89,12 @@ export function EmployeesTable({ employeesList, getOneDept }: Props) {
                 const classes = isLast
                   ? "p-4"
                   : "p-4 border-b border-blue-gray-50";
-
+                const userDepartments: Array<Dept> =
+                  _empl?.employee_details?.department?.map((_dept, index) =>
+                    _dept
+                      ? getOneDept(_dept)
+                      : ({ name: "Dept" + index } as any)
+                  );
                 return (
                   <tr key={_empl.name}>
                     <td className={classes}>
@@ -114,15 +119,20 @@ export function EmployeesTable({ employeesList, getOneDept }: Props) {
                     </td>
                     <td className={classes}>
                       <div className="flex flex-col">
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {getOneDept(
-                            `${_empl?.employee_details.department[0]}`
-                          )?.name || "Dept name"}
-                        </Typography>
+                        {userDepartments?.map((_dept, index) =>
+                          _dept ? (
+                            <Typography
+                              key={index}
+                              variant="small"
+                              color="blue-gray"
+                              className="font-normal"
+                            >
+                              {_dept?.name || "Dept name"}
+                            </Typography>
+                          ) : (
+                            <p key={index}>{`Dept ${index}`}</p>
+                          )
+                        )}
                       </div>
                     </td>
                     <td className={classes}>
@@ -199,7 +209,7 @@ export function EmployeesTable({ employeesList, getOneDept }: Props) {
           </Button>
           <Button
             key={"next-btn"}
-            disabled={page == MAX_PAGES }
+            disabled={page == MAX_PAGES}
             onClick={() => setPage(page + 1)}
             variant="outlined"
             size="sm"

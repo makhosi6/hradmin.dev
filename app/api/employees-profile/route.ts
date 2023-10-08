@@ -101,16 +101,6 @@ export async function GET(request: NextRequest) {
 export async function POST(request: Request) {
   const _userEmployeeProfile = (await request.json()) as UserEmployeeProfile;
 
-  // const [user, employee] = deconstructUserEmployeeProfile({
-
-  //   userId: randomUUID(),
-  //   employee_details: {
-  //     ..._userEmployeeProfile.employee_details,
-  //     employee_id: "string",
-  //   },
-  //   ..._userEmployeeProfile,
-  // });
-
   const createdUser = await fetchWrapper({
     collection: "users",
     method: "POST",
@@ -139,9 +129,10 @@ export async function POST(request: Request) {
 
   return Response.json(
     aggregateUserEmployeeProfile({
-      user: createdEmployee,
+      user: createdUser,
       employee: createdEmployee,
     }),
+
     { status: 201 }
   );
 }
@@ -189,18 +180,25 @@ export async function PUT(request: Request) {
   ///
   const [user, employee] = deconstructUserEmployeeProfile(userEmployeeProfile);
 
-  const updateUser = await fetchWrapper({
+  const updatedUser = await fetchWrapper({
     collection: "users",
     method: "PUT",
     path: user.id,
     body: user,
   });
-  const updateEmployee = await fetchWrapper({
+
+  const updatedEmployee = await fetchWrapper({
     collection: "employees",
     method: "PUT",
     path: employee.id,
     body: employee,
   });
   ///
-  return Response.json(userEmployeeProfile, { status: 200 });
+  return Response.json(
+    aggregateUserEmployeeProfile({
+      user: { ...updatedUser },
+      employee: { ...updatedEmployee },
+    }),
+    { status: 200 }
+  );
 }

@@ -13,11 +13,12 @@ export async function GET(request: NextRequest) {
     page: params.get("page"),
   };
 
-
     
   const employees = await employeesCollection()
-    .find(sanitize(employeeSearchParams), { projection: { _id: 0 } } as any)
+    .find(sanitize({...employeeSearchParams, deptId: employeeSearchParams.managerId}), { projection: { _id: 0 } } as any)
     .toArray();
+
+    
   const total = employees.length;
   return Response.json({
     page: Number(employeeSearchParams.page || 0),
@@ -46,5 +47,5 @@ export async function POST(request: NextRequest) {
     } as any
   );
 
-  return Response.json(employee, { status: 201 });
+  return Response.json(data, { status: 201 });
 }

@@ -10,7 +10,7 @@ import {
   Typography,
 } from "../_lib/theme";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Bars3Icon, InformationCircleIcon } from "@heroicons/react/24/solid";
+import { Bars3Icon } from "@heroicons/react/24/solid";
 import styles from "../_styles/MenuButton.module.css";
 import Link from "next/link";
 import { useUserStore } from "../_store/current-user";
@@ -40,9 +40,7 @@ export default function MenuButton() {
   }, [currentUser, pathname, router, searchParams]);
 
   useEffect(() => {
-    if (currentUser?.role == "manager") {
-      getAllEmployeesByEmployeesManagerId(`${currentUser?.userId}`);
-    } else if (currentUser?.role == "admin") {
+    if (currentUser?.role == "manager" || currentUser?.role == "admin") {
       getAllEmployees();
     } else {
       if (currentUser) addEmployee(currentUser);
@@ -58,7 +56,6 @@ export default function MenuButton() {
 
   return (
     <div className={styles.menu}>
-      
       {showMenu && (
         <Menu>
           <MenuHandler>
@@ -195,7 +192,3 @@ export default function MenuButton() {
     </div>
   );
 }
-
-
-
-
