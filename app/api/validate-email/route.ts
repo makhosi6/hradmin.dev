@@ -1,12 +1,8 @@
 import { ValidateEmailReqParams } from "@/app/global_types";
-import { users } from "../data";
-import { randomUUID } from "crypto";
 import { usersCollection } from "../db";
 
 export async function HEAD(request: Request) {
   const params = new URL(request.url).searchParams;
-  console.log({ params });
-  console.log({ request: new URL(request.url) });
   const validateEmailParams: ValidateEmailReqParams = {
     email: params.get("email"),
   };
@@ -15,7 +11,9 @@ export async function HEAD(request: Request) {
   }
 
   const usersArr = await usersCollection()
-    .find({ email: validateEmailParams.email })
+    .find({ email: validateEmailParams.email }, {
+      projection: { _id: 0 },
+    } as any)
     .toArray();
 
   return usersArr.length > 0

@@ -25,7 +25,7 @@ export default function MenuButton() {
   const { logOut, isLoadingData } = useUserStore();
   const { setAllDept } = useDeptStore();
   const { currentUser } = useUserStore();
-  const { getAllEmployeesByEmployeesManagerId, addEmployee } =
+  const { getAllEmployeesByEmployeesManagerId, getAllEmployees, addEmployee } =
     useEmployeesStore();
 
   useEffect(() => {
@@ -40,13 +40,15 @@ export default function MenuButton() {
   }, [currentUser, pathname, router, searchParams]);
 
   useEffect(() => {
-    if (currentUser?.role == "manager" || currentUser?.role == "admin") {
+    if (currentUser?.role == "manager" ) {
       getAllEmployeesByEmployeesManagerId(`${currentUser?.userId}`);
-    } else {
+    } else if(currentUser?.role == "admin") {
+      getAllEmployees()
+    }else {
       addEmployee(currentUser!);
     }
     setAllDept();
-  }, [setAllDept, currentUser]);
+  }, [setAllDept, currentUser, getAllEmployeesByEmployeesManagerId, getAllEmployees, addEmployee]);
 
   return (
     <div className={styles.menu}>

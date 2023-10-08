@@ -49,13 +49,8 @@ export default function Employee({ params: { id } }: Props) {
   });
 
   useEffect(() => {
-    if (id !== "new") {
-      console.log("IFIF");
-
+    if (id !== "new")
       setDefaultValues(employees.filter((empl) => empl.userId === id)[0]);
-    } else {
-      console.log("ELSE");
-    }
 
     getAllEmployeesByEmployeesRole("manager")
       .then(setManagers)
@@ -90,12 +85,9 @@ export default function Employee({ params: { id } }: Props) {
   };
   useEffect(() => {
     const subscription = watch((data) => {
-      console.log({ DATA: data });
       if (data?.email) {
         validateEmail(data.email)
           .then((isEmailValid) => {
-            console.log({ isEmailValid });
-
             if (!isEmailValid) {
               setEmailError(
                 `Sorry! this email is already used (${data.email})`

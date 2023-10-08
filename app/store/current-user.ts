@@ -1,9 +1,10 @@
 import { mountStoreDevtool } from "simple-zustand-devtools";
 import { create } from "zustand";
-import { User,UserCredentials, UserEmployeeProfile } from "../global_types";
+import { User, UserCredentials, UserEmployeeProfile } from "../global_types";
 import { persist } from "zustand/middleware";
 
 type UserState = {
+  logInErr: string | null;
   authToken: string | null;
   currentUser: UserEmployeeProfile | null;
   logIn: (userCred: UserCredentials) => Promise<void>;
@@ -28,9 +29,9 @@ export const useUserStore = create<UserState>()(
               },
             }
           );
-          if(email.includes('unused')){
-  return true;
-}
+          if (email.includes("unused")) {
+            return true;
+          }
 
           if (response.status === 200) return false;
 
@@ -43,7 +44,7 @@ export const useUserStore = create<UserState>()(
       },
       logIn: async function (userCredentials) {
         // loading
-        set((state) => ({ ...state, isLoadingData: true }));
+        set((state) => ({ ...state, isLoadingData: true, logInErr: null }));
         // /// get data
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/login`,
@@ -57,19 +58,34 @@ export const useUserStore = create<UserState>()(
           }
         );
         const data = await response.json();
+        ///
+        if (!data.success) {
+          set((state) => ({
+            ...state,
+            logInErr: data.message,
+          }));
+        }
+        ///
+
         set((state) => ({
           ...state,
           isLoadingData: false,
-          currentUser: data.userProfile ,
+          currentUser: data.userProfile,
           authToken: data.token,
         }));
       },
       logOut: async () => {
-        set(state => ({...state,isLoadingData: true}));
-        await new Promise(res => setTimeout(res, 1000))
-        set((state) => ({ ...state, currentUser: null , authToken: null, isLoadingData: false}))
+        set((state) => ({ ...state, isLoadingData: true }));
+        await new Promise((res) => setTimeout(res, 1000));
+        set((state) => ({
+          ...state,
+          currentUser: null,
+          authToken: null,
+          isLoadingData: false,
+        }));
       },
       isLoadingData: false,
+      logInErr: null,
     }),
     { name: "currentUser" }
   )

@@ -13,6 +13,8 @@ type EmployeeState = {
   getAllEmployeesByEmployeesRole: (
     role: string
   ) => Promise<Array<UserEmployeeProfile>>;
+  getAllEmployees: (
+  ) => Promise<Array<UserEmployeeProfile>>;
   getEmployee: (employeeId: string) => Promise<UserEmployeeProfile>;
   deleteEmployee: (employeeId: string) => Promise<boolean>;
   addEmployee: (userProfile: UserEmployeeProfile) => void;
@@ -69,6 +71,26 @@ export const useEmployeesStore = create<EmployeeState>((set) => ({
 
     return data;
   },
+  getAllEmployees: async () => {
+    set((state) => ({ ...state, isLoadingData: true }));
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/employees-profile`,
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer TOKEN" },
+      }
+    );
+
+    const { data } = await response.json();
+
+    set((state) => ({
+      ...state,
+      isLoadingData: false,
+      employees: data,
+    }));
+
+    return data;
+  },
   /**
    * filter employees by role
    */
@@ -98,7 +120,7 @@ export const useEmployeesStore = create<EmployeeState>((set) => ({
     }));
   },
   editEmployee: async (newEmployee: UserEmployeeProfile) => {
-    console.log({ newEmployee });
+
     set((state) => ({
       ...state,
       isLoadingData: true,
@@ -130,7 +152,6 @@ export const useEmployeesStore = create<EmployeeState>((set) => ({
     return updatedUser;
   },
   createEmployee: async (newEmployee: UserEmployeeProfile) => {
-    console.log({ newEmployee });
 
     set((state) => ({
       ...state,

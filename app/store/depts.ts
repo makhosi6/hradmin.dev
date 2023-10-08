@@ -18,7 +18,7 @@ export const useDeptStore = create<DeptState>((set, get) => ({
   updateDept: async (dept: Dept) => {
     /// loading state
     set((state) => ({ ...state, isLoadingData: true }));
-console.log({dept});
+
 
     ///
     const response = await fetch(

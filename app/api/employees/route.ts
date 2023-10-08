@@ -1,7 +1,9 @@
 import { NextRequest } from "next/server";
-import { URL, URLSearchParams } from "url";
-import { employees } from "../data";
+import { URL } from "url";
 import { EmployeeReqParams } from "@/app/global_types";
+import { randomUUID } from "crypto";
+import { employeesCollection } from "../db";
+import { sanitize } from "@/app/helpers";
 
 export async function GET(request: NextRequest) {
   const params = new URL(request.url).searchParams;
@@ -10,8 +12,13 @@ export async function GET(request: NextRequest) {
     role: params.get("role"),
     page: params.get("page"),
   };
+
+
+    
+  const employees = await employeesCollection()
+    .find(sanitize(employeeSearchParams), { projection: { _id: 0 } } as any)
+    .toArray();
   const total = employees.length;
-  /// get and return employees where deptId==`deptId` && userId==`userId` && role==`role`
   return Response.json({
     page: Number(employeeSearchParams.page || 0),
     next_page: Number(employeeSearchParams.page || 1) + 1,
@@ -23,6 +30,21 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const employee = await request.json()
+  const employee = await request.json();
+
+  const data = {
+    ...employee,
+    createdAt: new Date().getTime(),
+    id: randomUUID(),
+  };
+  await employeesCollection().updateOne(
+    { userId: data.userId },
+    { $set: data },
+    {
+      upsert: true,
+      projection: { _id: 0 },
+    } as any
+  );
+
   return Response.json(employee, { status: 201 });
 }

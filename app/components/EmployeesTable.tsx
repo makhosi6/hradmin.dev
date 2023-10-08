@@ -79,11 +79,9 @@ export function EmployeesTable({ employeesList, getOneDept }: Props) {
           <tbody>
             {employeesList
               .sort((a, b) => (a?.createdAt || 0) - (b?.createdAt || 0))
+              .filter((_empl) => _empl?.role !== "admin")
               .slice(OFFSET, LIMIT)
               .map((_empl, index) => {
-
-                console.log({_empl, employeesList, OFFSET , page, LIMIT});
-                
                 const isLast = index === employeesList.length - 1;
                 const classes = isLast
                   ? "p-4"
@@ -118,8 +116,9 @@ export function EmployeesTable({ employeesList, getOneDept }: Props) {
                           color="blue-gray"
                           className="font-normal"
                         >
-                          {getOneDept(`${_empl?.employee_details.department[0]}`)
-                            ?.name || "Dept name"}
+                          {getOneDept(
+                            `${_empl?.employee_details.department[0]}`
+                          )?.name || "Dept name"}
                         </Typography>
                       </div>
                     </td>

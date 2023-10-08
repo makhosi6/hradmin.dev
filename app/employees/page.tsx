@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FilterCard from "../components/EmployeesFilterCard";
 import { EmployeesTable } from "../components/EmployeesTable";
 import { PageBreadcrumbs } from "../components/PageBreadcrumbs";
@@ -13,6 +13,10 @@ export default function Employees() {
   const [filteredEmployees, setFilteredEmployees] =
     useState<UserEmployeeProfile[]>(employees);
   const { getOne: getOneDept } = useDeptStore();
+
+  useEffect(() => {
+    setFilteredEmployees(employees);
+  }, [employees]);
 
   return (
     <div className="flex flex-col gap-6 m-auto py-5 max-w-3xl w-full mb-5">

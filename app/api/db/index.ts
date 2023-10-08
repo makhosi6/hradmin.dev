@@ -26,7 +26,6 @@ const isConnected = async (db: Db) => {
     global.mongoClient = new MongoClient(url);
     await global.mongoClient.connect();
     console.log("Connected successfully to server");
-    console.log(JSON.stringify(global.mongoClient.options, null, 2));
   }
 })();
 

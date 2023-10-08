@@ -43,7 +43,6 @@ export function DeptTable({ filteredDeptList, managers }: Props) {
   const { updateDept } = useDeptStore();
   function getManager(id: string): UserEmployeeProfile | null {
     const manager = managers.filter((_manager) => _manager.userId === id);
-    console.log({ manager, id, managers });
     return manager.length > 0 ? manager[0] : null;
   }
 

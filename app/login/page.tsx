@@ -12,7 +12,7 @@ type InputFields = {
 };
 export default function Login() {
   const router = useRouter()
-  const { currentUser, logIn, isLoadingData } = useUserStore();
+  const { currentUser, logIn, isLoadingData , logInErr } = useUserStore();
   const {
     register,
     handleSubmit,
@@ -53,8 +53,9 @@ export default function Login() {
                 type="password"
                 crossOrigin={undefined}
                 minLength={4}
-              />
+              /> 
               <div>
+                <p >{logInErr && logInErr}</p>
                 <span className="pt-2">
                   {errors.password && <span>{errors.password?.message}</span>}
                 </span>

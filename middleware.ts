@@ -19,3 +19,5 @@ function isAuthenticated(request: NextRequest) {
   /// if token matches
   return token && token.includes("Bearer");
 }
+
+

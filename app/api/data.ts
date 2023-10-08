@@ -171,8 +171,6 @@ export const aggregateUserEmployeeProfile = ({
   user: User;
   employee: Employee;
 }): UserEmployeeProfile => {
-  /// get manages
-  const managers: Array<Dept> = [];
   return {
     userId: user.id,
     username: user.username,
@@ -196,8 +194,6 @@ export const deconstructUserEmployeeProfile = (
 ): [User, Employee] => {
   const { employee_details, userId, role, email, username, name } =
     userEmployeeProfile;
-
-  console.log({ employee_details, userEmployeeProfile });
 
   /// employee from 'userEmployeeProfile'
   const employee: Employee = {

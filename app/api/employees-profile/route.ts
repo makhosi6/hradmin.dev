@@ -11,11 +11,10 @@ import {
   Employee,
   EmployeeReqParams,
 } from "@/app/global_types";
-import { fetchWrapper } from "../../helpers";
+import { fetchWrapper, sanitize } from "../../helpers";
 
 export async function GET(request: NextRequest) {
   const params = new URL(request.url).searchParams;
-
   const employeeSearchParams: UserProfileReqParams = {
     employeeId: params.get("employeeId"),
     role: params.get("role"),
@@ -26,15 +25,25 @@ export async function GET(request: NextRequest) {
   if (!employeeSearchParams.employeeId) {
     let requestParams: EmployeeReqParams = {};
     if (employeeSearchParams.role) {
-      requestParams["managerId"] = employeeSearchParams.managerId;
+      requestParams = {
+        ...requestParams,
+        managerId: employeeSearchParams.managerId,
+      };
     } else if (employeeSearchParams.role) {
-      requestParams["role"] = employeeSearchParams.role;
+      requestParams = {
+        ...requestParams,
+        role: employeeSearchParams.role,
+      };
     }
+
     const { data } = await fetchWrapper({
       method: "GET",
       collection: "employees",
       path: "",
-      requestParams,
+      requestParams: sanitize({
+        ...employeeSearchParams,
+        ...requestParams,
+      }),
     });
 
     const allEmployees: Array<UserEmployeeProfile> = [];
@@ -102,7 +111,6 @@ export async function POST(request: Request) {
     },
     ..._userEmployeeProfile,
   });
-
 
   const createUser = await fetchWrapper({
     collection: "users",

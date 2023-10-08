@@ -1,3 +1,4 @@
+import cleanDeep from "clean-deep";
 import { FetchParams, Status } from "./global_types";
 
 export const fetchWrapper = async ({
@@ -14,7 +15,6 @@ export const fetchWrapper = async ({
       process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3002/api";
     let url = new URL(`${baseUrl}/${collection}/${path}`);
 
-    console.log({ URL: url.toString(), requestParams });
     if (JSON.stringify(requestParams) != "{}") {
       Object.keys(requestParams).forEach((key) =>
         url.searchParams.append(key, requestParams[key])
@@ -37,9 +37,10 @@ export const fetchWrapper = async ({
   }
 };
 
+export function statusAsBool(status: string) {
+  return status?.toLowerCase() === Status.active;
+}
 
-export function statusAsBool(status: string){
-console.log({status});
-
-  return status?.toLowerCase() === Status.active
+export function sanitize(data: object) {
+  return cleanDeep(data);
 }

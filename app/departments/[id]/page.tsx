@@ -51,9 +51,9 @@ export default function DeptPage({ params: { id } }: Props) {
 
   const submitHandler: SubmitHandler<InputFields> = async (data) => {
     if (isValid) {
+      /// TODO:
       console.log("create a dept record and show snackbar");
       const { name, status, manager: manager_id } = getValues();
-      console.log("GEEse", getValues(), isValid, errors);
       await createDept({
         name,
         status,
@@ -65,13 +65,9 @@ export default function DeptPage({ params: { id } }: Props) {
     }
   };
   useEffect(() => {
-    if (id !== "new") {
-      console.log("IFIF", getValues(), isValid);
-
+    if (id !== "new")
       setDefaultValues(departments.filter((_dept) => _dept.id === id)[0]);
-    } else {
-      console.log("ELSE");
-    }
+
     getAllEmployeesByEmployeesRole("manager")
       .then(setManagers)
       .catch(console.warn);

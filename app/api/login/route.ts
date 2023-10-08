@@ -1,11 +1,9 @@
 import { aggregateUserEmployeeProfile, employees } from "./../data";
-import { fetchWrapper } from "@/app/helpers";
-import { users } from "../data";
-import { usersCollection } from "../db";
+import bcrypt from "bcrypt";
+import { usersCollection, employeesCollection } from "../db";
 
 export async function POST(request: Request) {
-  const { password, email , } = await request.json();
-  console.log({usersCollection});
+  const { password, email } = await request.json();
 
   if (!password || !email) {
     return Response.json(
@@ -13,14 +11,31 @@ export async function POST(request: Request) {
         success: false,
         message: "Bad Request",
       },
-      { status: 201 }
+      { status: 400 }
     );
   }
+
   /// user // get user from DB
-  const user = users[2];
+  const userData = await usersCollection()
+    .find({ email }, { projection: { _id: 0 } } as any)
+    .toArray();
+  const user = userData.length > 0 ? (userData[0] as any) : null;
+
+  if (!bcrypt.compareSync(password, user?.password) || !user) {
+    return Response.json(
+      {
+        success: false,
+        message: "Authentication error: incorrect email/password",
+      },
+      { status: 200 }
+    );
+  }
 
   // also get employee
-  const employee = employees[2];
+  const employeeData = await employeesCollection()
+    .find({ userId: user?.id }, { projection: { _id: 0 } } as any)
+    .toArray();
+  const employee = employeeData[0] as any;
 
   return Response.json(
     {
