@@ -1,12 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import FilterCard from "../components/EmployeesFilterCard";
-import { EmployeesTable } from "../components/EmployeesTable";
-import { PageBreadcrumbs } from "../components/PageBreadcrumbs";
-import { UserEmployeeProfile } from "../global_types";
-import { useDeptStore } from "../store/depts";
-import { statusAsBool } from "../helpers";
-import { useEmployeesStore } from "../store/employees";
+import FilterCard from "../_components/EmployeesFilterCard";
+import { EmployeesTable } from "../_components/EmployeesTable";
+import { PageBreadcrumbs } from "../_components/PageBreadcrumbs";
+import { UserEmployeeProfile } from "../_lib/global_types";
+import { useDeptStore } from "../_store/depts";
+import { statusAsBool } from "../_lib/helpers";
+import { useEmployeesStore } from "../_store/employees";
 
 export default function Employees() {
   const { employees } = useEmployeesStore();

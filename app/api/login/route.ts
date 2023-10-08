@@ -1,4 +1,4 @@
-import { aggregateUserEmployeeProfile, employees } from "./../data";
+import { aggregateUserEmployeeProfile } from "../../_lib/helpers";
 import bcrypt from "bcrypt";
 import { usersCollection, employeesCollection } from "../db";
 
@@ -19,9 +19,11 @@ export async function POST(request: Request) {
   const userData = await usersCollection()
     .find({ email }, { projection: { _id: 0 } } as any)
     .toArray();
-  const user = userData.length > 0 ? (userData[0] as any) : null;
+    
+    const user = userData.length > 0 ? (userData[0] as any) : null;
 
-  if (!bcrypt.compareSync(password, user?.password) || !user) {
+
+  if (!user || !bcrypt.compareSync(password, user?.password)) {
     return Response.json(
       {
         success: false,

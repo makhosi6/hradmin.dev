@@ -1,4 +1,4 @@
-import { Spinner } from '@/app/theme'
+import { Spinner } from '@/app/_lib/theme'
 import React from 'react'
 
 export default function Loading() {

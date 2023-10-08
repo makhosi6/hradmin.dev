@@ -18,25 +18,28 @@ export async function GET(request: NextRequest) {
   });
 }
 
-function hashPassword(pass?: string) {
-  const defaultPassword = pass || "Password123#";
-  const salt = genSaltSync(10);
-  const hash = hashSync(defaultPassword, salt);
-  return hash;
-}
 
 export async function POST(request: Request) {
   const user = await request.json();
+
   const data = {
     ...user,
     id: randomUUID(),
     createdAt: new Date().getTime(),
     password: hashPassword(user?.password),
   };
-await usersCollection().updateOne({ email: data.email }, { $set: data }, {
+  await usersCollection().updateOne({ email: data.email }, { $set: data }, {
     upsert: true,
     projection: { _id: 0 },
   } as any);
-  
+
   return Response.json(data, { status: 201 });
+}
+
+
+ function hashPassword(pass?: string) {
+  const defaultPassword = pass || "Password123#";
+  const salt = genSaltSync(10);
+  const hash = hashSync(defaultPassword, salt);
+  return hash;
 }

@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { employees, users } from "../../data";
+import { employees, users } from "../../../_store/data";
 import { usersCollection } from "../../db";
 
 export async function GET(request: Request) {

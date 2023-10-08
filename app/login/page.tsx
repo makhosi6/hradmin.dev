@@ -1,18 +1,22 @@
 "use client";
 
-import { Button, Input, CardBody, Card, Spinner } from "@/app/theme";
+import { Button, Input, CardBody, Card, Spinner } from "@/app/_lib/theme";
 import { useEffect } from "react";
-import { useRouter } from 'next/navigation'
-import { useForm,  } from "react-hook-form";
-import { useUserStore } from "../store/current-user";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { useUserStore } from "../_store/current-user";
+import { useEmployeesStore } from "../_store/employees";
+import { useSnackbarController } from "../_store/snackbar";
 
 type InputFields = {
   email: string;
   password: string;
 };
 export default function Login() {
-  const router = useRouter()
-  const { currentUser, logIn, isLoadingData , logInErr } = useUserStore();
+  const router = useRouter();
+  const { currentUser, logIn, isLoadingData, logInErr } = useUserStore();
+  const { addEmployee } = useEmployeesStore();
+  const { showSnackBar } = useSnackbarController();
   const {
     register,
     handleSubmit,
@@ -25,10 +29,17 @@ export default function Login() {
   });
 
   useEffect(() => {
-    if(currentUser != null){
-      router.replace("/employees")
+    if (currentUser != null) {
+      showSnackBar({
+        message: "You are logged in as" + currentUser.email,
+        show: true,
+        snackBarTheme: "success",
+      });
+
+      router.replace("/employees");
+      addEmployee(currentUser);
     }
-  },[currentUser, router])
+  }, [addEmployee, currentUser, router, showSnackBar]);
 
   return (
     <div className="flex justify-center items-center h-screen">
@@ -53,9 +64,11 @@ export default function Login() {
                 type="password"
                 crossOrigin={undefined}
                 minLength={4}
-              /> 
+              />
               <div>
-                <p >{logInErr && logInErr}</p>
+                <p key={"errors"} className="mt-2 text-red-300">
+                  {logInErr && logInErr}
+                </p>
                 <span className="pt-2">
                   {errors.password && <span>{errors.password?.message}</span>}
                 </span>

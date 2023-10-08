@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Button, Input, CardBody, Card, CardFooter } from "@/app/theme";
+import { Button, Input, CardBody, Card, CardFooter } from "@/app/_lib/theme";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Status, Role, UserEmployeeProfile } from "@/app/global_types";
-import { InputWithDropdown } from "@/app/components/Dropdown";
-import { useEmployeesStore } from "@/app/store/employees";
-import { useUserStore } from "@/app/store/current-user";
+import { Status, Role, UserEmployeeProfile } from "@/app/_lib/global_types";
+import { InputWithDropdown } from "@/app/_components/Dropdown";
+import { useEmployeesStore } from "@/app/_store/employees";
+import { useUserStore } from "@/app/_store/current-user";
+import { useRouter } from "next/navigation";
+import { useSnackbarController } from "@/app/_store/snackbar";
 
 type InputFields = {
   name: string;
@@ -25,6 +27,7 @@ type Props = {
 };
 
 export default function Employee({ params: { id } }: Props) {
+  const router = useRouter()
   const [defaultValues, setDefaultValues] = useState<
     UserEmployeeProfile | undefined
   >(undefined);
@@ -33,7 +36,8 @@ export default function Employee({ params: { id } }: Props) {
   const { getAllEmployeesByEmployeesRole, createEmployee, getEmployee } =
     useEmployeesStore();
   const { isLoadingData, employees } = useEmployeesStore();
-  const { validateEmail } = useUserStore();
+  const { showSnackBar } = useSnackbarController();
+  const { validateEmail, currentUser } = useUserStore();
   const {
     register,
     handleSubmit,
@@ -79,7 +83,11 @@ export default function Employee({ params: { id } }: Props) {
         },
         phoneNumber: data.phoneNumber,
       });
-
+      showSnackBar({
+        message: "Employee created (" + data.email + ")",
+        show: true,
+        snackBarTheme: "success",
+      });
       reset();
     }
   };
@@ -102,6 +110,7 @@ export default function Employee({ params: { id } }: Props) {
     return () => subscription.unsubscribe();
   }, [validateEmail, watch]);
 
+  
   return (
     <div className="flex justify-center items-center h-screen">
       <Card className={"mt-6 w-96" + (isLoadingData ? " blur-sm " : "")}>
@@ -180,10 +189,10 @@ export default function Employee({ params: { id } }: Props) {
                   })
                 }
                 label="Manager"
-                options={managers.map((manager) => {
+                options={[...managers, currentUser].map((manager) => {
                   return {
-                    value: `${manager.name} ${manager.username} (${manager.userId})`,
-                    id: `${manager.userId}`,
+                    value: `${manager?.name} (${manager?.username})`,
+                    id: `${manager?.userId}`,
                   };
                 })}
               />
@@ -235,7 +244,7 @@ export default function Employee({ params: { id } }: Props) {
           >
             Save
           </Button>
-          <Button onClick={() => reset()} className="mx-2" variant="outlined">
+          <Button onClick={() => router.back()} className="mx-2" variant="outlined">
             Cancel
           </Button>
         </CardFooter>

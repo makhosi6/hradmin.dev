@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { DeptTable } from "../components/DeptTable";
-import DeptFilterCard from "../components/DeptFilterCard";
-import { PageBreadcrumbs } from "../components/PageBreadcrumbs";
-import { useDeptStore } from "../store/depts";
-import { Dept, UserEmployeeProfile } from "../global_types";
-import { useEmployeesStore } from "../store/employees";
+import { DeptTable } from "../_components/DeptTable";
+import DeptFilterCard from "../_components/DeptFilterCard";
+import { PageBreadcrumbs } from "../_components/PageBreadcrumbs";
+import { useDeptStore } from "../_store/depts";
+import { Dept, UserEmployeeProfile } from "../_lib/global_types";
+import { useEmployeesStore } from "../_store/employees";
 
 export default function Departments() {
   const { departments } = useDeptStore();

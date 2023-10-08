@@ -1,17 +1,16 @@
-import {
-  deconstructUserEmployeeProfile,
-  aggregateUserEmployeeProfile,
-  users,
-  employees,
-} from "./../data";
 import { NextRequest } from "next/server";
 import {
   UserEmployeeProfile,
   UserProfileReqParams,
-  Employee,
   EmployeeReqParams,
-} from "@/app/global_types";
-import { fetchWrapper, sanitize } from "../../helpers";
+  Employee,
+} from "@/app/_lib/global_types";
+import {
+  fetchWrapper,
+  sanitize,
+  deconstructUserEmployeeProfile,
+  aggregateUserEmployeeProfile,
+} from "../../_lib/helpers";
 
 export async function GET(request: NextRequest) {
   const params = new URL(request.url).searchParams;
@@ -100,32 +99,51 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: Request) {
-  const _userEmployeeProfile = await request.json();
+  const _userEmployeeProfile = (await request.json()) as UserEmployeeProfile;
 
-  const [user, employee] = deconstructUserEmployeeProfile({
-    password: "PASSWORD",
-    userId: "uuid",
-    employee_details: {
-      ..._userEmployeeProfile.employee_details,
-      employee_id: "string",
-    },
-    ..._userEmployeeProfile,
-  });
+  // const [user, employee] = deconstructUserEmployeeProfile({
 
-  const createUser = await fetchWrapper({
+  //   userId: randomUUID(),
+  //   employee_details: {
+  //     ..._userEmployeeProfile.employee_details,
+  //     employee_id: "string",
+  //   },
+  //   ..._userEmployeeProfile,
+  // });
+
+  const createdUser = await fetchWrapper({
     collection: "users",
     method: "POST",
     path: "",
-    body: user,
+    body: {
+      name: _userEmployeeProfile.name,
+      username: _userEmployeeProfile.username,
+      phoneNumber: _userEmployeeProfile.phoneNumber,
+      email: _userEmployeeProfile.email,
+      createdAt: new Date().getTime(),
+      password: "Password123#",
+    },
   });
-  const createEmployee = await fetchWrapper({
+
+  const createdEmployee = await fetchWrapper({
     collection: "employees",
     method: "POST",
     path: "",
-    body: employee,
+    body: {
+      userId: createdUser.id,
+      role: _userEmployeeProfile.role,
+      isActive: _userEmployeeProfile?.employee_details?.isActive,
+      deptId: _userEmployeeProfile?.employee_details?.department,
+    },
   });
 
-  return Response.json(_userEmployeeProfile, { status: 201 });
+  return Response.json(
+    aggregateUserEmployeeProfile({
+      user: createdEmployee,
+      employee: createdEmployee,
+    }),
+    { status: 201 }
+  );
 }
 
 export async function DELETE(request: Request) {

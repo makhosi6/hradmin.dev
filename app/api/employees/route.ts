@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
 import { URL } from "url";
-import { EmployeeReqParams } from "@/app/global_types";
+import { EmployeeReqParams } from "@/app/_lib/global_types";
 import { randomUUID } from "crypto";
 import { employeesCollection } from "../db";
-import { sanitize } from "@/app/helpers";
+import { sanitize } from "@/app/_lib/helpers";
 
 export async function GET(request: NextRequest) {
   const params = new URL(request.url).searchParams;

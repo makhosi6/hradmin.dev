@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { DeptReqParams } from "@/app/global_types";
+import { DeptReqParams } from "@/app/_lib/global_types";
 import { randomUUID } from "crypto";
 import { departmentsCollection } from "../db";
 

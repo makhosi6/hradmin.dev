@@ -1,19 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Input,
-  CardBody,
-  Card,
-  CardFooter,
-  Spinner,
-} from "@/app/theme";
+import { Button, Input, CardBody, Card, CardFooter } from "@/app/_lib/theme";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Dept, Status, UserEmployeeProfile } from "@/app/global_types";
-import { InputWithDropdown } from "@/app/components/Dropdown";
-import { useDeptStore } from "@/app/store/depts";
-import { useEmployeesStore } from "@/app/store/employees";
+import { Dept, Status, UserEmployeeProfile } from "@/app/_lib/global_types";
+import { InputWithDropdown } from "@/app/_components/Dropdown";
+import { useDeptStore } from "@/app/_store/depts";
+import { useEmployeesStore } from "@/app/_store/employees";
+import { useUserStore } from "@/app/_store/current-user";
+import { useRouter } from "next/navigation";
+import { useSnackbarController } from "@/app/_store/snackbar";
 
 type InputFields = {
   name: string;
@@ -28,12 +24,15 @@ type Props = {
 };
 
 export default function DeptPage({ params: { id } }: Props) {
+  const router = useRouter();
   const [defaultValues, setDefaultValues] = useState<Dept | undefined>(
     undefined
   );
   const [managers, setManagers] = useState<UserEmployeeProfile[]>([]);
   const { departments, isLoadingData, createDept, updateDept } = useDeptStore();
+  const { currentUser } = useUserStore();
   const { getAllEmployeesByEmployeesRole } = useEmployeesStore();
+  const { showSnackBar } = useSnackbarController();
   const {
     register,
     reset,
@@ -59,9 +58,18 @@ export default function DeptPage({ params: { id } }: Props) {
         status,
         manager_id,
       });
+      showSnackBar({
+        message: "Success: Record created",
+        show: true,
+        snackBarTheme: "success",
+      });
       reset();
     } else {
-      console.log("Else complain");
+      showSnackBar({
+        message: "Error Occurred: Record not created",
+        show: true,
+        snackBarTheme: "error",
+      });
     }
   };
   useEffect(() => {
@@ -101,10 +109,10 @@ export default function DeptPage({ params: { id } }: Props) {
                   })
                 }
                 label="Manager"
-                options={managers.map((manager) => {
+                options={[...managers, currentUser].map((manager) => {
                   return {
-                    value: `${manager.name} ${manager.username} (${manager.userId})`,
-                    id: `${manager.userId}`,
+                    value: `${manager?.name} (${manager?.username})`,
+                    id: `${manager?.userId}`,
                   };
                 })}
               />
@@ -145,7 +153,11 @@ export default function DeptPage({ params: { id } }: Props) {
           >
             Save
           </Button>
-          <Button onClick={() => reset()} className="mx-2" variant="outlined">
+          <Button
+            onClick={() => router.back()}
+            className="mx-2"
+            variant="outlined"
+          >
             Cancel
           </Button>
         </CardFooter>

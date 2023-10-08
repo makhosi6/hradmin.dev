@@ -1,4 +1,4 @@
-import { Spinner } from "./theme";
+import { Spinner } from "./_lib/theme";
 
 export default function Home() {
   return (

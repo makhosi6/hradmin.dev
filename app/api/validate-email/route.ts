@@ -1,4 +1,4 @@
-import { ValidateEmailReqParams } from "@/app/global_types";
+import { ValidateEmailReqParams } from "@/app/_lib/global_types";
 import { usersCollection } from "../db";
 
 export async function HEAD(request: Request) {

@@ -1,4 +1,4 @@
-import { userEmployeeProfile } from "./../../../app/api/data";
+import { userEmployeeProfile } from "../../../app/_store/data";
 import { RequestMethod, createMocks } from "node-mocks-http";
 import {
   POST,
@@ -6,7 +6,7 @@ import {
   GET,
   DELETE,
 } from "../../../app/api/employees-profile/route";
-import { UserEmployeeProfile } from "@/app/global_types";
+import { UserEmployeeProfile } from "@/app/_lib/global_types";
 const api_base_url = "http://localhost:3000/api";
 describe("UserEmployeeProfile CRUD routes - /api/employees-profile/", () => {
   test("Should Get a one (UserEmployeeProfile)", async () => {
