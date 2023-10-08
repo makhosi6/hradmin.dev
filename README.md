@@ -15,3 +15,6 @@ HR Administration System which allowing users to efficiently manage employee det
 - Build and run, `npm run build && npm start`
 
 - Then visit [`http://localhost:3000`](http://localhost:3000/)
+
+
+*NOTE: the `.env` file is included*
