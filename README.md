@@ -12,7 +12,7 @@ HR Administration System which allowing users to efficiently manage employee det
 
 - Fired up the database server, by running this command on root on the project. `docker-compose up -d --remove-orphans --force-recreate`
 
-- Build and run, `npm run build && npm start`
+- Build and run, `npm run build && npm start`, or `npm run dev` if you prefer. 
 
 - Then visit [`http://localhost:3000`](http://localhost:3000/)
 
